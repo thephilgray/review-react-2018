@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import Header from "./Header";
-import Order from "./Order";
-import Inventory from "./Inventory";
+import React, { Component } from 'react';
+import Header from './Header/Header';
+import Order from './Order/Order';
+import Inventory from './Inventory/Inventory';
 
 class App extends Component {
   render() {
