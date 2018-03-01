@@ -5,7 +5,7 @@ class StorePicker extends Component {
     return (
       <form className="store-selector">
         <h2>Please Enter A Store</h2>
-        <input type="text" required="required" placeholder="Store" />
+        <input type="text" required placeholder="Store" />
         <button type="submit">Visit Store</button>
       </form>
     );
