@@ -4,6 +4,7 @@ node_modules
 # testing
 coverage
 *.snap
+__snapshots__
 
 # production
 build
