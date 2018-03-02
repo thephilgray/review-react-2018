@@ -22,3 +22,15 @@ it('renders a `Order` component', () => {
 it('renders a `Inventory` component', () => {
   expect(app.find(Inventory).exists()).toBe(true);
 });
+
+// TODO: mock an addFish function and test that state is update with the new fish
+
+const testFish = {
+  desc: 'Another fish',
+  image: 'http://images.com/perch.jpg',
+  name: 'Perch',
+  price: 29,
+  status: 'available'
+};
+
+const inventory = shallow(<Inventory />);
