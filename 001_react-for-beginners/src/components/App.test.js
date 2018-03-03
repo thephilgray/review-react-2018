@@ -24,8 +24,6 @@ it('renders a `Inventory` component', () => {
   expect(app.find(Inventory).exists()).toBe(true);
 });
 
-// TODO: mock an addFish function and test that state is update with the new fish
-
 // const testFish = {
 //   desc: 'Another fish',
 //   image: 'http://images.com/perch.jpg',
@@ -33,7 +31,7 @@ it('renders a `Inventory` component', () => {
 //   price: 29,
 //   status: 'available'
 // };
-it('adds a single fish to app state', () => {
+it('adds a single fish to app state on submit', () => {
   const wrapper = mount(<App />);
   // wrapper
   //   .find('.fish-edit')
