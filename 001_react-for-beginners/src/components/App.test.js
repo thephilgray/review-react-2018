@@ -1,10 +1,11 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
 import App from './App';
 import Header from './Header/Header';
 import Order from './Order/Order';
 import Inventory from './Inventory/Inventory';
+import sampleFishes from '../sample-fishes';
 
 const app = shallow(<App />);
 it('renders correctly', () => {
@@ -25,12 +26,31 @@ it('renders a `Inventory` component', () => {
 
 // TODO: mock an addFish function and test that state is update with the new fish
 
-const testFish = {
-  desc: 'Another fish',
-  image: 'http://images.com/perch.jpg',
-  name: 'Perch',
-  price: 29,
-  status: 'available'
-};
+// const testFish = {
+//   desc: 'Another fish',
+//   image: 'http://images.com/perch.jpg',
+//   name: 'Perch',
+//   price: 29,
+//   status: 'available'
+// };
+it('adds a single fish to app state', () => {
+  const wrapper = mount(<App />);
+  // wrapper
+  //   .find('.fish-edit')
+  //   .find('input[name="name"]')
+  //   .simulate('change', {
+  //     target: { value: testFish.name }
+  //   });
 
-const inventory = shallow(<Inventory />);
+  wrapper.find('form').simulate('submit');
+  expect(Object.keys(wrapper.state().fishes).length).toBe(1);
+});
+
+it('loads fishes object to app state', () => {
+  const wrapper = mount(<App />);
+  wrapper
+    .find('Inventory')
+    .find('.button-loadFishes')
+    .simulate('click');
+  expect(wrapper.state().fishes).toEqual(sampleFishes);
+});

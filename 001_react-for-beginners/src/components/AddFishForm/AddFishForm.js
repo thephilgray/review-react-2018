@@ -52,7 +52,7 @@ class AddFishForm extends Component {
         />
         <input
           type="text"
-          name=" image"
+          name="image"
           ref={input => {
             this.imageRef = input;
           }}
