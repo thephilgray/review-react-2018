@@ -12,8 +12,7 @@ class Order extends Component {
           Sorry {fish ? fish.name : 'fish'} is no longer available
         </li>
       );
-    }
-    {
+    } else {
       return (
         <li key={key}>
           {count} lbs {fish.name} {formatPrice(count * fish.price)}
