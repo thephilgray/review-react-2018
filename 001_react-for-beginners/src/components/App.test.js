@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
-
+import toJson from 'enzyme-to-json';
 import App from './App';
 import Header from './Header/Header';
 import Order from './Order/Order';
@@ -51,4 +51,17 @@ it('loads fishes object to app state', () => {
     .find('.button-loadFishes')
     .simulate('click');
   expect(wrapper.state().fishes).toEqual(sampleFishes);
+});
+
+it('renders fish components from state', () => {
+  const wrapper = mount(<App />);
+  wrapper
+    .find('Inventory')
+    .find('.button-loadFishes')
+    .simulate('click');
+
+  const fishes = wrapper.find('.fishes');
+  expect(toJson(fishes).children.length).toBe(
+    Object.values(sampleFishes).length
+  );
 });
