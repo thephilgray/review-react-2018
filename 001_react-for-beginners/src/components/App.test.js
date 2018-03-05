@@ -52,4 +52,21 @@ describe('app', () => {
       Object.values(sampleFishes).length
     );
   });
+  describe('when calling `addToOrder`', () => {
+    it('adds to order', () => {
+      const wrapper = mount(<App />);
+      wrapper
+        .find('Inventory')
+        .find('.button-loadFishes')
+        .simulate('click');
+
+      wrapper
+        .find('.menu-fish')
+        .first()
+        .find('button')
+        .simulate('click');
+
+      expect(Object.values(wrapper.state().order)).toHaveLength(1);
+    });
+  });
 });
