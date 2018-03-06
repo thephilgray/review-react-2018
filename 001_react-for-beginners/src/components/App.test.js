@@ -108,11 +108,11 @@ describe('app', () => {
         desc: 'Test description',
         image: '/images/hali.jpg',
         name: 'Test',
-        price: '1724',
+        price: 1724,
         status: 'available'
       };
 
-      wrapper.instance().updateFish(0, updateFish);
+      wrapper.instance().updateFish('0', updateFish);
       expect(Object.values(wrapper.state().fishes[0])).toContain(
         'Test description'
       );

@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 class AddFishForm extends Component {
+  static propTypes = {
+    addFish: PropTypes.func
+  };
   createFish = e => {
     e.preventDefault();
     const fish = {
