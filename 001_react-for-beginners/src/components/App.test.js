@@ -118,4 +118,16 @@ describe('app', () => {
       );
     });
   });
+  describe('when manually calling `deleteFish`', () => {
+    it('removes one item from `state.fishes`', () => {
+      const testFishes = {
+        fish1: {
+          ...sampleFishes.fish1
+        }
+      };
+      const wrapper = mount(<App match={mockMatch} fishes={testFishes} />);
+      wrapper.instance().deleteFish(0);
+      expect(Object.keys(wrapper.state().fishes).length).toBe(0);
+    });
+  });
 });
