@@ -65,6 +65,12 @@ class App extends Component {
     this.setState({ order });
   };
 
+  deleteOrder = key => {
+    const order = { ...this.state.order };
+    delete order[key];
+    this.setState({ order });
+  };
+
   renderFishes() {
     if (!this.state.fishes) {
       return null;
@@ -89,7 +95,11 @@ class App extends Component {
           <ul className="fishes">{this.renderFishes()}</ul>
         </div>
 
-        <Order fishes={this.state.fishes} order={this.state.order} />
+        <Order
+          fishes={this.state.fishes}
+          order={this.state.order}
+          deleteOrder={this.deleteOrder}
+        />
         <Inventory
           addFish={this.addFish}
           updateFish={this.updateFish}

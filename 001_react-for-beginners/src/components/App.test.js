@@ -130,4 +130,16 @@ describe('app', () => {
       expect(Object.keys(wrapper.state().fishes).length).toBe(0);
     });
   });
+  describe('`deleteOrder`', () => {
+    it('removes one item from `state.order`', () => {
+      const testOrder = {
+        fish1: 1,
+        fish2: 2
+      };
+
+      const wrapper = mount(<App match={mockMatch} order={testOrder} />);
+      wrapper.instance().deleteOrder('fish2');
+      expect(Object.keys(wrapper.state().order).length).toBe(1);
+    });
+  });
 });
