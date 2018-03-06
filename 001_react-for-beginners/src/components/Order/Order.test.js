@@ -1,5 +1,6 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
+import toJson from 'enzyme-to-json';
 
 import Order from './order';
 import sampleFishes from '../../sample-fishes';
@@ -15,10 +16,10 @@ describe('Order', () => {
   describe('when the fish becomes unavailable', () => {
     const withUnavailableFish = { ...sampleFishes };
     withUnavailableFish.fish1.status = 'unavailable';
-    const wrapper = shallow(
+    const wrapper = mount(
       <Order fishes={withUnavailableFish} order={{ fish1: 1 }} />
     );
-    expect(wrapper.find('.total').text()).toContain('$0.00');
-    expect(wrapper.find('.order-wrap ul').text()).toContain('Sorry');
+    expect(wrapper.find('.order-wrap').text()).toContain('$0.00');
+    expect(wrapper.find('.order-wrap').text()).toContain('Sorry');
   });
 });
