@@ -51,9 +51,9 @@ describe('app', () => {
     expect(app.find(Inventory).exists()).toBe(true);
   });
 
-  it.skip('adds a single fish to app state on submit', () => {
-    const wrapper = mount(<App match={mockMatch} />);
-    wrapper.find('form').simulate('submit');
+  it('adds a single fish to app state on submit', () => {
+    const wrapper = mount(<App match={mockMatch} fishes={{}} />);
+    wrapper.instance().addFish(sampleFishes.fish1);
     expect(Object.keys(wrapper.state().fishes).length).toBe(1);
   });
 
@@ -93,6 +93,29 @@ describe('app', () => {
         .simulate('click');
 
       expect(Object.values(wrapper.state().order)).toHaveLength(1);
+    });
+  });
+
+  describe('when manually calling `updateFish`', () => {
+    it('changes the value in `state.fishes`', () => {
+      const wrapper = mount(<App match={mockMatch} />);
+      wrapper
+        .find('Inventory')
+        .find('.button-loadFishes')
+        .simulate('click');
+
+      const updateFish = {
+        desc: 'Test description',
+        image: '/images/hali.jpg',
+        name: 'Test',
+        price: '1724',
+        status: 'available'
+      };
+
+      wrapper.instance().updateFish(0, updateFish);
+      expect(Object.values(wrapper.state().fishes[0])).toContain(
+        'Test description'
+      );
     });
   });
 });
