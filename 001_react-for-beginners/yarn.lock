@@ -2286,7 +2286,7 @@ dotenv-expand@4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-4.2.0.tgz#def1f1ca5d6059d24a766e587942c21106ce1275"
 
-dotenv@4.0.0, dotenv@^4.0.0:
+dotenv@4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-4.0.0.tgz#864ef1379aced55ce6f95debecdce179f7a0cd1d"
 
@@ -6008,13 +6008,6 @@ re-base@^3.2.2:
   resolved "https://registry.yarnpkg.com/re-base/-/re-base-3.2.2.tgz#a840cbe84a6bbf9e94cadcb7752d16695d0bad85"
   dependencies:
     firebase "^4.5.0"
-
-react-app-rewired@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/react-app-rewired/-/react-app-rewired-1.5.0.tgz#8889d2f9ae8d8af16b340ca5424ffd5a07d23af2"
-  dependencies:
-    cross-spawn "^5.1.0"
-    dotenv "^4.0.0"
 
 react-dev-utils@^5.0.0:
   version "5.0.0"
