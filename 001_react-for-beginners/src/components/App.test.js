@@ -59,38 +59,27 @@ describe('app', () => {
 
   it('loads fishes object to app state', () => {
     const wrapper = mount(<App match={mockMatch} />);
-    wrapper
-      .find('Inventory')
-      .find('.button-loadFishes')
-      .simulate('click');
+    wrapper.instance().loadSampleFishes();
     expect(wrapper.state().fishes).toEqual(sampleFishes);
   });
 
   it('renders fish components from state', () => {
     const wrapper = mount(<App match={mockMatch} />);
-    wrapper
-      .find('Inventory')
-      .find('.button-loadFishes')
-      .simulate('click');
+
+    wrapper.instance().loadSampleFishes();
 
     const fishes = wrapper.find('.fishes');
-    expect(toJson(fishes).children.length).toBe(
+    expect(fishes.instance().children.length).toBe(
       Object.values(sampleFishes).length
     );
   });
   describe('when calling `addToOrder`', () => {
     it('adds to order', () => {
       const wrapper = mount(<App match={mockMatch} />);
-      wrapper
-        .find('Inventory')
-        .find('.button-loadFishes')
-        .simulate('click');
 
-      wrapper
-        .find('.menu-fish')
-        .first()
-        .find('button')
-        .simulate('click');
+      wrapper.instance().loadSampleFishes();
+
+      wrapper.instance().addToOrder('fish1');
 
       expect(Object.values(wrapper.state().order)).toHaveLength(1);
     });
@@ -99,10 +88,8 @@ describe('app', () => {
   describe('when manually calling `updateFish`', () => {
     it('changes the value in `state.fishes`', () => {
       const wrapper = mount(<App match={mockMatch} />);
-      wrapper
-        .find('Inventory')
-        .find('.button-loadFishes')
-        .simulate('click');
+
+      wrapper.instance().loadSampleFishes();
 
       const updateFish = {
         desc: 'Test description',

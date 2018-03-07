@@ -30,6 +30,7 @@ class Inventory extends Component {
   }
 
   authHandler = async authData => {
+    console.log(authData);
     const store = await base.fetch(this.props.storeId, { context: this });
     console.log(store);
     if (!store.owner) {
