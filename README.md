@@ -18,6 +18,24 @@ Thu Mar 8 17:01:05 EST 2018
 
 * From older notes, but with tests added.
 
+### Create a new project with Create React App
+
+```bash
+npx create-react-app <project-name>
+```
+
+### Install testing tools
+
+```bash
+yarn add enzyme eznyme-adapter-react-16 enzyme-to-json
+```
+
+### Routing
+
+```bash
+
+```
+
 ## TODO: Context API
 
 Source: [Heres how React's New Context API Works
