@@ -14,12 +14,16 @@ Thu Mar 8 17:01:05 EST 2018
 
 [DCJS](https://www.meetup.com/DC-JavaScript/) is hosting a meetup at NPR tonight, titled "Six Reasons to Use Styled Components", so I figured it would be a good opportunity to take notes and explore CSS in JS.
 
-## Context API
+## Redux Basic - 003_redux
+
+* From older notes, but with tests added.
+
+## TODO: Context API
 
 Source: [Heres how React's New Context API Works
 ](https://www.youtube.com/watch?v=XLJN4JfniH4&feature=push-u&attr_tag=yoWAlfDXmw2y95nn-6)
 
-```
+```js
 // Create a new context
 
 const MyContext = React.createContext();
