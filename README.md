@@ -12,8 +12,6 @@ Wes Bos released the updated version of his [React course](https://reactforbegin
 
 ## Redux Basic - 003_redux
 
-* From older notes, but with tests added.
-
 ### Create a new project with Create React App
 
 ```bash
@@ -102,7 +100,9 @@ it('renders the Dashboard component', () => {
   const wrapper = shallow(<Dashboard />);
   expect(wrapper).toMatchSnapshot();
 });
+```
 
+```js
 // src/containers/Dashboard/Dashboard.js
 
 import React, { Component } from 'react';
@@ -250,8 +250,8 @@ export const decrement = () => {
 #### Create reducer
 
 * Create a redux state value to manage in the initialState object that gets passed into the reducer.
-
 * Create cases for action types, shallow copy the state, and return it immutably.
+* NOTE: You can generate simple reducer tests from redux dev tools.
 
 ```js
 // /src/store/reducers/reducer.test.js
@@ -377,19 +377,71 @@ export default store;
 * Declare `mapStateToProps` const and `mapDispatchToActions` const
 * Use redux state as props within the component
 * Use `connect` to inject redux mapped props into component
+* Make sure to export the unconnected component class, and import this into the test (may break some previous tests; may need to wrap with `Provider`, passing in store)
 
 ```js
+// src/containers/Dashboard.test.js
+import React from 'react';
+
+import { shallow, mount } from 'enzyme';
+
+import { Dashboard } from './Dashboard';
+
+describe('Dashboard', () => {
+  it('renders the Dashboard component', () => {
+    const wrapper = shallow(<Dashboard />);
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('displays the counter from props', () => {
+    const props = { counter: 0 };
+    const wrapper = mount(<Dashboard {...props} />);
+    expect(wrapper.find('h3').text()).toContain('0');
+  });
+
+  it('calls the increment action when the increment button is clicked', () => {
+    const mockIncrement = jest.fn();
+    const props = { counter: 0, increment: mockIncrement };
+    const wrapper = mount(<Dashboard {...props} />);
+    wrapper.find('.dashboard__buttonIncrement').simulate('click');
+    expect(mockIncrement).toHaveBeenCalled();
+  });
+  it('calls the decrement action when the decrement button is clicked', () => {
+    const mockDecrement = jest.fn();
+    const props = { counter: 0, decrement: mockDecrement };
+    const wrapper = mount(<Dashboard {...props} />);
+    wrapper.find('.dashboard__buttonDecrement').simulate('click');
+    expect(mockDecrement).toHaveBeenCalled();
+  });
+});
+```
+
+```js
+// src/containers/Dashboard.js
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { increment, decrement } from '../../store/actions/actions';
-class Dashboard extends Component {
+
+// export class
+export class Dashboard extends Component {
   render() {
     return (
       <div>
         <h2>Dashboard</h2>
         <h3>{this.props.counter}</h3>
-        <button onClick={() => this.props.increment()}>increment</button>
-        <button onClick={() => this.props.decrement()}>decrement</button>
+        <button
+          className="dashboard__button dashboard__buttonIncrement"
+          onClick={() => this.props.increment()}
+        >
+          increment
+        </button>
+        <button
+          className="dashboard__button dashboard__buttonDecrement"
+          onClick={() => this.props.decrement()}
+        >
+          decrement
+        </button>
       </div>
     );
   }
