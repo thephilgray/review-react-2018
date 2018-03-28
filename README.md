@@ -12,6 +12,39 @@ Complete with tests.
 
 ## Styled Components - 002_styled-components
 
+### Create a new project with Create React App
+
+```bash
+npx create-react-app <project-name>
+```
+
+* Remove boilerplate
+
+### Install testing tools
+
+* Install `enzyme` and adapter
+
+```bash
+yarn add enzyme eznyme-adapter-react-16 enzyme-to-json
+```
+
+* Create `setupTests.js` file for enzyme:
+
+```js
+// src/setupTests.js
+
+import { configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+
+configure({ adapter: new Adapter() });
+```
+
+* Install `jest-styled-components`
+
+```bash
+yarn add --dev jest-styled-components
+```
+
 ## Redux Basic - 003_redux
 
 ### Create a new project with Create React App
