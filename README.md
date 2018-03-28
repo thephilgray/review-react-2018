@@ -219,7 +219,7 @@ yarn add react-redux redux
 ```js
 // src/store/store.js
 import { createStore } from 'redux';
-import reducer from './reducers/reducer';
+import reducer from '../reducers/reducer';
 const store = createStore(reducer);
 export default store;
 ```
