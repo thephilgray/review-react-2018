@@ -12,6 +12,8 @@ Complete with tests.
 
 ## Styled Components - 002_styled-components
 
+* Recreate the components in this [VUE project](https://github.com/philgrayphilgray/designs-2018/tree/master/000_album-collector) using React, Styled Components, and a TDD approach.
+
 ### Create a new project with Create React App
 
 ```bash
@@ -25,7 +27,7 @@ npx create-react-app <project-name>
 * Install `enzyme` and adapter
 
 ```bash
-yarn add enzyme eznyme-adapter-react-16 enzyme-to-json
+yarn add --dev enzyme enzyme-adapter-react-16 enzyme-to-json
 ```
 
 * Create `setupTests.js` file for enzyme:
@@ -45,6 +47,71 @@ configure({ adapter: new Adapter() });
 yarn add --dev jest-styled-components
 ```
 
+### Create `App` component
+
+```js
+// src/App.test.js
+import React from 'react';
+import { shallow } from 'enzyme';
+
+import App from './App';
+
+describe('App', () => {
+  it('should render properly', () => {
+    const wrapper = shallow(<App />);
+    expect(wrapper).toMatchSnapshot();
+  });
+});
+```
+
+```js
+// src/App.js
+import React, { Component } from 'react';
+
+class App extends Component {
+  render() {
+    return <div>App</div>;
+  }
+}
+
+export default App;
+```
+
+### Create `CardGrid` component
+
+* Create `src/components/CardGrid` subfolder
+
+```js
+// src/components/CardGrid/CardGrid.test.js
+
+import React from 'react';
+import { shallow } from 'enzyme';
+
+import CardGrid from './CardGrid';
+
+describe('CardGrid', () => {
+  it('renders properly', () => {
+    const wrapper = shallow(<CardGrid />);
+
+    expect(wrapper).toMatchSnapshot();
+  });
+});
+```
+
+```js
+// src/components/CardGrid/CardGrid.js
+
+import React, { Component } from 'react';
+
+class CardGrid extends Component {
+  render() {
+    return <div>CardGrid</div>;
+  }
+}
+
+export default CardGrid;
+```
+
 ## Redux Basic - 003_redux
 
 ### Create a new project with Create React App
@@ -58,7 +125,7 @@ npx create-react-app <project-name>
 * Install enzyme and adapter
 
 ```bash
-yarn add enzyme eznyme-adapter-react-16 enzyme-to-json
+yarn add enzyme enzyme-adapter-react-16 enzyme-to-json
 ```
 
 * Create `setupTests.js` file for enzyme:
