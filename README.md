@@ -6,7 +6,9 @@ A personal collection of projects, demos, and online course work revisiting Reac
 
 Wed Feb 28 19:47:33 EST 2018
 
-Wes Bos released the updated version of his [React course](https://reactforbeginners.com/) today. A couple years ago, I followed along with the original version of the course. As the title suggests, it's intended for beginners and fairly basic but completely up-to-date, so I thought it would be a good way to kick off this review. I also want to use it as practice for getting more up to speed with with Jest and Enzyme, so I'll be writing tests and reading docs as I go.
+Wes Bos released the updated version of his [React course](https://reactforbeginners.com/). A couple years ago, I followed along with the original version of the course. As the title suggests, it's intended for beginners and fairly basic but completely up-to-date, so I thought it would be a good way to kick off this review. I also wanted to use it as practice for getting more up to speed with with Jest and Enzyme.
+
+Complete with tests.
 
 ## Styled Components - 002_styled-components
 
@@ -460,7 +462,7 @@ const mapDispatchToActions = dispatch => {
 export default connect(mapStateToProps, mapDispatchToActions)(Dashboard);
 ```
 
-## Redux, Axios, JSON Server - 004_redux-axios
+## TODO: Redux, Axios, JSON Server - 004_redux-axios
 
 ### Hookup redux to a fake rest API server with JSON Server and axios.
 
@@ -1418,7 +1420,11 @@ const mapDispatchToActions = dispatch => {
 export default connect(mapStateToProps, mapDispatchToActions)(Albums);
 ```
 
-## TODO: Context API
+## TODO: Redux Full Stack - 005_redux-mongo-express
+
+## TODO: Apollo - 006_apollo
+
+## TODO: Context API - 007_context-api
 
 Source: [Heres how React's New Context API Works
 ](https://www.youtube.com/watch?v=XLJN4JfniH4&feature=push-u&attr_tag=yoWAlfDXmw2y95nn-6)
@@ -1484,7 +1490,3 @@ class Child extends Component {
     }
 }
 ```
-
-## Redux Full Stack - 005_redux-mongo-express
-
-## Apollo - 006_apollo
