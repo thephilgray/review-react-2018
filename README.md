@@ -98,7 +98,7 @@ import { shallow } from 'enzyme';
 
 import Dashboard from './Dashboard';
 
-test('renders the Dashboard component', () => {
+it('renders the Dashboard component', () => {
   const wrapper = shallow(<Dashboard />);
   expect(wrapper).toMatchSnapshot();
 });
@@ -131,12 +131,12 @@ import Dashboard from './containers/Dashboard/Dashboard';
 import LandingPage from './containers/LandingPage/LandingPage';
 import App from './App';
 
-test('renders the `App` component properly', () => {
+it('renders the `App` component properly', () => {
   const wrapper = shallow(<App />);
   expect(wrapper).toMatchSnapshot();
 });
 
-test('renders the `LandingPage` component at `/`', () => {
+it('renders the `LandingPage` component at `/`', () => {
   const wrapper = mount(
     <MemoryRouter initialEntries={['/']}>
       <App />
@@ -147,7 +147,7 @@ test('renders the `LandingPage` component at `/`', () => {
   expect(wrapper.find(LandingPage)).toHaveLength(1);
 });
 
-test('renders the `Dashboard` component at `/dashboard`', () => {
+it('renders the `Dashboard` component at `/dashboard`', () => {
   const wrapper = mount(
     <MemoryRouter initialEntries={['/dashboard']}>
       <App />
@@ -196,6 +196,107 @@ export default App;
 const initialState = {};
 const reducer = (state = initialState, action) => {
   switch (action.type) {
+    default:
+      return state;
+  }
+};
+export default reducer;
+```
+
+#### Create `actionTypes`
+
+* Create boilerplate action types, INCREMENT and DECREMENT.
+
+```js
+// /src/store/actions/actionTypes.js
+export const INCREMENT = 'INCREMENT';
+export const DECREMENT = 'DECREMENT';
+```
+
+#### Create action creators
+
+* Create action creators in actions.js
+
+```js
+// /src/store/actions/actions.test.js
+import { INCREMENT, DECREMENT } from './actionTypes';
+import { increment, decrement } from './actions';
+
+it('creates an action to increment the counter', () => {
+  const expected = { type: INCREMENT };
+  expect(increment()).toEqual(expected);
+});
+it('creates an action to decrement the counter', () => {
+  const expected = { type: DECREMENT };
+  expect(decrement()).toEqual(expected);
+});
+```
+
+```js
+// /src/store/actions/actions.js
+import { INCREMENT, DECREMENT } from './actionTypes';
+export const increment = () => {
+  return {
+    type: INCREMENT
+  };
+};
+export const decrement = () => {
+  return {
+    type: DECREMENT
+  };
+};
+```
+
+#### Create reducer
+
+* Create a redux state value to manage in the initialState object that gets passed into the reducer.
+
+* Create cases for action types, shallow copy the state, and return it immutably.
+
+```js
+// /src/store/reducers/reducer.test.js
+import reducer from './reducer';
+import { INCREMENT, DECREMENT } from '../store/actions/actionTypes';
+
+describe('reducer', () => {
+  it('increments the counter by 1', () => {
+    const expected = 1;
+    const actual = reducer(undefined, { type: INCREMENT }).counter;
+    expect(actual).toEqual(expected);
+  });
+
+  it('decrements the counter by 1', () => {
+    const expected = -1;
+    const actual = reducer(undefined, { type: DECREMENT }).counter;
+    expect(actual).toEqual(expected);
+  });
+
+  it('returns the default counter value if no action is specified', () => {
+    const expected = 0;
+    const actual = reducer(undefined, {}).counter;
+    expect(actual).toEqual(expected);
+  });
+});
+```
+
+```js
+// /src/store/reducers/reducer.js
+import { INCREMENT, DECREMENT } from '../store/actions/actionTypes';
+const initialState = {
+  counter: 0
+};
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case INCREMENT:
+      return {
+        ...state,
+        counter: state.counter + 1
+      };
+    case DECREMENT:
+      return {
+        ...state,
+        counter: state.counter - 1
+      };
     default:
       return state;
   }
@@ -269,85 +370,6 @@ const store = createStore(reducer, composeEnhancers());
 export default store;
 ```
 
-#### Create `actionTypes`
-
-* Create a redux state value to manage in the initialState object that gets passed into the reducer.
-
-```js
-// /src/store/reducers/reducer.js
-const initialState = {
-  counter: 0
-};
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    default:
-      return state;
-  }
-};
-export default reducer;
-```
-
-* Create boilerplate action types, INCREMENT and DECREMENT.
-
-```js
-// /src/store/actions/actionTypes.js
-export const INCREMENT = 'INCREMENT';
-export const DECREMENT = 'DECREMENT';
-```
-
-#### Create action creators
-
-* Create action creators in actions.js
-
-```js
-import { INCREMENT, DECREMENT } from './actionTypes';
-import { increment, decrement }
-```
-
-```js
-// /src/store/actions/actions.js
-import { INCREMENT, DECREMENT } from './actionTypes';
-export const increment = () => {
-  return {
-    type: INCREMENT
-  };
-};
-export const decrement = () => {
-  return {
-    type: DECREMENT
-  };
-};
-```
-
-#### Impmort actionTypes into reducer
-
-* Create cases for action types, shallow copy the state, and return it immutably.
-
-```js
-// /src/store/reducers/reducer.js
-import { INCREMENT, DECREMENT } from '../actions/actionTypes';
-const initialState = {
-  counter: 0
-};
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case INCREMENT:
-      return {
-        ...state,
-        counter: state.counter + 1
-      };
-    case DECREMENT:
-      return {
-        ...state,
-        counter: state.counter - 1
-      };
-    default:
-      return state;
-  }
-};
-export default reducer;
-```
-
 #### Hookup redux to components
 
 * Import `connect` from `react-redux`
@@ -386,7 +408,9 @@ const mapDispatchToActions = dispatch => {
 export default connect(mapStateToProps, mapDispatchToActions)(Dashboard);
 ```
 
-#### Hookup redux to a fake rest API server with JSON Server and axios.
+## Redux, Axios, JSON Server - 004_redux-axios
+
+### Hookup redux to a fake rest API server with JSON Server and axios.
 
 * Install json-server globally
 
@@ -809,7 +833,7 @@ const mapDispatchToActions = dispatch => {
 export default connect(null, mapDispatchToActions)(NewAlbumForm);
 ```
 
-##### Add Delete buttons
+#### Add Delete buttons
 
 * Create a new action type in `actionTypes.js`
 
@@ -1016,7 +1040,7 @@ const mapDispatchToActions = dispatch => {
 export default connect(mapStateToProps, mapDispatchToActions)(Albums);
 ```
 
-##### Add Edit buttons
+#### Add Edit buttons
 
 * Create a new action type in `actionTypes.js`
 
@@ -1409,6 +1433,6 @@ class Child extends Component {
 }
 ```
 
-## Redux Full Stack - 003_redux-mongo-express
+## Redux Full Stack - 005_redux-mongo-express
 
-## Apollo - 004_apollo
+## Apollo - 006_apollo

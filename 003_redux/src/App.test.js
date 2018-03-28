@@ -6,12 +6,12 @@ import Dashboard from './containers/Dashboard/Dashboard';
 import LandingPage from './containers/LandingPage/LandingPage';
 import App from './App';
 
-test('renders the `App` component properly', () => {
+it('renders the `App` component properly', () => {
   const wrapper = shallow(<App />);
   expect(wrapper).toMatchSnapshot();
 });
 
-test('renders the `LandingPage` component at `/`', () => {
+it('renders the `LandingPage` component at `/`', () => {
   const wrapper = mount(
     <MemoryRouter initialEntries={['/']}>
       <App />
@@ -22,7 +22,7 @@ test('renders the `LandingPage` component at `/`', () => {
   expect(wrapper.find(LandingPage)).toHaveLength(1);
 });
 
-test('renders the `Dashboard` component at `/dashboard`', () => {
+it('renders the `Dashboard` component at `/dashboard`', () => {
   const wrapper = mount(
     <MemoryRouter initialEntries={['/dashboard']}>
       <App />
