@@ -192,7 +192,7 @@ export default App;
 * Export reducer
 
 ```js
-// reducer.js
+// src/reducers/reducer.js
 const initialState = {};
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -211,13 +211,13 @@ yarn add react-redux redux
 
 ##### Create store
 
-* Import createStore from redux
+* Import `createStore` from redux
 * Import reducer
-* Create a new const and call createStore, passing in the reducer. (For multiple reducers, use combineReducers from redux).
-* Export store
+* Create a new const and call `createStore`, passing in the reducer. (For multiple reducers, use `combineReducers` from redux).
+* Export `store`
 
 ```js
-//store.js
+// src/store/store.js
 import { createStore } from 'redux';
 import reducer from './reducers/reducer';
 const store = createStore(reducer);
@@ -226,7 +226,7 @@ export default store;
 
 ##### Hookup store to app
 
-* Import `Provider` from r`eact-redux`.
+* Import `Provider` from `react-redux`.
 * Import `store`
 * Create a new const and in it, wrap top-level app component with `<Provider/>` component
 * Set the `store` prop value to the imported `store`
@@ -255,9 +255,9 @@ registerServiceWorker();
 #### Install redux dev tools
 
 * Install redux dev tools browser extension
-* Import compose from redux
-* Create const composeEnhancers
-* Call composeEnhancers() as the second argument of createStore()
+* Import `compose` from redux
+* Create const `composeEnhancers`
+* Call `composeEnhancers()` as the second argument of `createStore()`
 * Test in the browser. Open dev tools and click the Redux tab.
 
 ```js
@@ -298,6 +298,11 @@ export const DECREMENT = 'DECREMENT';
 #### Create action creators
 
 * Create action creators in actions.js
+
+```js
+import { INCREMENT, DECREMENT } from './actionTypes';
+import { increment, decrement }
+```
 
 ```js
 // /src/store/actions/actions.js
