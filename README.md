@@ -107,10 +107,8 @@ export default App;
 
 ### Create `CardGrid` component
 
-* Create `src/components/CardGrid` subfolder
-
 ```js
-// src/components/CardGrid/CardGrid.test.js
+// src/components/CardGrid.test.js
 
 import React from 'react';
 import { shallow } from 'enzyme';
