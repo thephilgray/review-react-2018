@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
+import Icon from '../Icon';
 import pencil from '../../assets/svg/pencil.svg';
 import bin from '../../assets/svg/bin.svg';
 
@@ -46,14 +47,6 @@ const CardButton = styled.button`
   }
 `;
 
-const CardIcon = styled.span`
-  width: 1.5em;
-  height: 1.5em;
-  display: inline-block;
-  background-image: url(${props => props.icon});
-  background-size: 100%;
-`;
-
 const Card = ({ card, placeholder = 'http://via.placeholder.com/300x300' }) => {
   return (
     <CardWrapper>
@@ -66,10 +59,10 @@ const Card = ({ card, placeholder = 'http://via.placeholder.com/300x300' }) => {
         </CardDetails>
         <CardControls>
           <CardButton aria-label="Edit this album">
-            <CardIcon icon={pencil} />
+            <Icon name={pencil} />
           </CardButton>
           <CardButton aria-label="Delete this album">
-            <CardIcon icon={bin} />
+            <Icon name={bin} />
           </CardButton>
         </CardControls>
       </CardBody>

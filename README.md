@@ -279,6 +279,31 @@ export default Card;
 * Wherever we use `props` within a styled component, it might make sense to move it out to its own file
 * In the example above, `CardIcon` would probably be more useful in its own `Icon` file, where it can be easily imported and reused throughout the app
 
+* Create a new `Icon` component file from `CardIcon`
+
+```js
+import styled from 'styled-components';
+import pencil from '../assets/svg/pencil.svg';
+
+const Icon = styled.span`
+  width: 1.5em;
+  height: 1.5em;
+  display: inline-block;
+  background-image: url(${props => props.name});
+  background-size: 100%;
+`;
+
+Icon.defaultProps = {
+  name: { pencil }
+};
+
+export default Icon;
+```
+
+* But actually, it would be nice to use inline SVG icons, so we're going to eject from CRA for that
+
+Source: [SVG sprite icons for React and Webpack]('https://codersmind.com/svg-sprite-icons-react-webpack/');
+
 ### Install Styled-Components
 
 ```bash
