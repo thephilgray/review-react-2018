@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
+import Icon from './Icon';
 import pencil from '../icons/pencil.svg';
 import bin from '../icons/bin.svg';
 
@@ -66,10 +67,10 @@ const Card = ({ card, placeholder = 'http://via.placeholder.com/300x300' }) => {
         </CardDetails>
         <CardControls>
           <CardButton aria-label="Edit this album">
-            <CardIcon icon={pencil} />
+            <Icon glyph={pencil} />
           </CardButton>
           <CardButton aria-label="Delete this album">
-            <CardIcon icon={bin} />
+            <Icon glyph={bin} />
           </CardButton>
         </CardControls>
       </CardBody>

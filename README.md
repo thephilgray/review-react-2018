@@ -254,9 +254,59 @@ Icon.defaultProps = {
 export default Icon;
 ```
 
-* But actually, it would be nice to use inline SVG icons, so we're going to eject from CRA for that
+* But actually, it would be nice to use inline SVG icons. Let's try using an external tool to help.
+* Eject and install `svg-sprite-html-webpack`
 
-Source: [SVG sprite icons for React and Webpack]('https://codersmind.com/svg-sprite-icons-react-webpack/');
+```bash
+yarn eject
+npm i svg-sprite-html-webpack
+```
+
+* Change `webpack.config`. These are insertions:
+
+```js
+const SvgSpriteHtmlWebpackPlugin = require('svg-sprite-html-webpack');
+  module: {
+    rules: [
+         {
+            test: /\.svg?$/,
+            exclude: /node_modules/,
+            use: SvgSpriteHtmlWebpackPlugin.getLoader()
+          },
+    ]
+    },
+    plugins: [
+      new SvgSpriteHtmlWebpackPlugin({
+        generateSymbolId: function(svgFilePath, svgHash, svgContent) {
+          return svgHash.toString();
+      }
+    }),
+    ]
+```
+
+* Add a `webpack.config.js` file to `.storybook`. We need to extend storybook to support the inlining of SVG icons. See [Full Control Mode]('https://storybook.js.org/configurations/custom-webpack-config/#full-control-mode')
+
+```js
+const SvgSpriteHtmlWebpackPlugin = require('svg-sprite-html-webpack');
+// Export a function. Accept the base config as the only param.
+module.exports = (storybookBaseConfig, configType) => {
+  storybookBaseConfig.module.rules.push({
+    test: /\.svg?$/,
+    exclude: /node_modules/,
+    use: SvgSpriteHtmlWebpackPlugin.getLoader()
+  });
+  storybookBaseConfig.plugins.push(
+    new SvgSpriteHtmlWebpackPlugin({
+      generateSymbolId: function(svgFilePath, svgHash, svgContent) {
+        return svgHash.toString();
+      }
+    })
+  );
+
+  // Return the altered config
+  return storybookBaseConfig;
+};
+```
 
 ### Create `CardGrid` component
 
