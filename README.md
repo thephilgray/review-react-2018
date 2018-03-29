@@ -47,6 +47,29 @@ configure({ adapter: new Adapter() });
 yarn add --dev jest-styled-components
 ```
 
+### Create `index.css` and add base styles
+
+```css
+/**  src/index.css **/
+html {
+  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px;
+  word-spacing: 1px;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+  margin: 0;
+}
+```
+
 ### Create `App` component
 
 ```js
@@ -111,6 +134,158 @@ class CardGrid extends Component {
 
 export default CardGrid;
 ```
+
+### Add Storybook
+
+* Storybook is like a styleguide generator but it also serves as a kind of visual testing interface because you can setup different use cases for each component and pass in different props and view the rendered component or error message in isolation.
+* Jest component tests are a little redundant at this point; so, I might just use Storybook to test all the UI components; I'll come back and write jest tests as needed
+
+```bash
+npm i -g @storybook/cli
+getstorybook
+yarn run storybook
+```
+
+* Add `CardGrid` to stories
+
+```js
+import React from 'react';
+import { storiesOf } from '@storybook/react';
+
+import CardGrid from '../components/CardGrid/CardGrid';
+
+storiesOf('CardGrid', module).add('with text', () => <CardGrid>Hey</CardGrid>);
+```
+
+* Create a `Card` container component story
+
+```js
+// src/stories/index.js
+import React from 'react';
+import { storiesOf } from '@storybook/react';
+
+import CardGrid from '../components/CardGrid/CardGrid';
+import Card from '../components/Card/Card';
+
+const cards = [
+  {
+    id: '1521567322',
+    title: 'Space is the Place',
+    artist: 'Sun Ra',
+    art:
+      'https://upload.wikimedia.org/wikipedia/en/6/6c/Space_Is_The_Place_album_cover.jpg',
+    year: '1973',
+    rating: 5
+  },
+  {
+    id: '1521567405',
+    title: 'Lanquidity',
+    artist: 'Sun Ra',
+    art: 'https://upload.wikimedia.org/wikipedia/en/2/22/Lanquidity.jpg',
+    year: '1978',
+    rating: 4
+  }
+];
+
+storiesOf('Card', module).add('with card', () => <Card card={cards[0]} />);
+```
+
+* Create the `Card` container component
+* Import `styled` from `styled-components`
+
+```js
+import React, { Component } from 'react';
+import styled from 'styled-components';
+
+import pencil from '../../assets/svg/pencil.svg';
+import bin from '../../assets/svg/bin.svg';
+
+const CardWrapper = styled.div`
+  position: relative;
+  width: 310px;
+  padding: 1em;
+  box-shadow: 1px 4px 2px 1px #aaa;
+  margin: 0.5em;
+`;
+
+const CardImage = styled.img`
+  flex: 100%;
+  width: 100%;
+  height: auto;
+  position: relative;
+`;
+
+const CardBody = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
+
+const CardDetails = styled.div`
+  flex: 60%;
+  padding: 1em;
+`;
+
+const CardControls = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  width: 2em;
+  justify-content: center;
+  align-items: center;
+`;
+
+const CardButton = styled.button`
+  padding: 0.25em;
+  background: transparent;
+  border-color: transparent;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const CardIcon = styled.span`
+  width: 1.5em;
+  height: 1.5em;
+  display: inline-block;
+  background-image: url(${props => props.icon});
+  background-size: 100%;
+`;
+
+const Card = ({ card, placeholder = 'http://via.placeholder.com/300x300' }) => {
+  return (
+    <CardWrapper>
+      <CardImage src={card.art || placeholder} />
+      <CardBody>
+        <CardDetails>
+          <p>{card.title}</p>
+          <p>{card.artist}</p>
+          <p>{card.year}</p>
+        </CardDetails>
+        <CardControls>
+          <CardButton aria-label="Edit this album">
+            <CardIcon icon={pencil} />
+          </CardButton>
+          <CardButton aria-label="Delete this album">
+            <CardIcon icon={bin} />
+          </CardButton>
+        </CardControls>
+      </CardBody>
+    </CardWrapper>
+  );
+};
+
+export default Card;
+```
+
+* Wherever we use `props` within a styled component, it might make sense to move it out to its own file
+* In the example above, `CardIcon` would probably be more useful in its own `Icon` file, where it can be easily imported and reused throughout the app
+
+### Install Styled-Components
+
+```bash
+yarn add styled-components
+```
+
+### Create
 
 ## Redux Basic - 003_redux
 
