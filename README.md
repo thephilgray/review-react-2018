@@ -105,50 +105,6 @@ class App extends Component {
 export default App;
 ```
 
-### Create `CardGrid` component
-
-```js
-// src/components/CardGrid.test.js
-
-import React from 'react';
-import { shallow } from 'enzyme';
-
-import CardGrid from './CardGrid';
-
-describe('CardGrid', () => {
-  it('renders properly', () => {
-    const wrapper = shallow(<CardGrid />);
-
-    expect(wrapper).toMatchSnapshot();
-  });
-});
-```
-
-```js
-// src/components/CardGrid/CardGrid.js
-
-import React, { Component } from 'react';
-
-class CardGrid extends Component {
-  render() {
-    return <div>CardGrid</div>;
-  }
-}
-
-export default CardGrid;
-```
-
-* Add `CardGrid` to stories
-
-```js
-import React from 'react';
-import { storiesOf } from '@storybook/react';
-
-import CardGrid from '../components/CardGrid/CardGrid';
-
-storiesOf('CardGrid', module).add('with text', () => <CardGrid>Hey</CardGrid>);
-```
-
 * Create a `Card` container component story
 
 ```js
@@ -156,8 +112,7 @@ storiesOf('CardGrid', module).add('with text', () => <CardGrid>Hey</CardGrid>);
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 
-import CardGrid from '../components/CardGrid/CardGrid';
-import Card from '../components/Card/Card';
+import Card from '../components/Card';
 
 const cards = [
   {
@@ -182,15 +137,22 @@ const cards = [
 storiesOf('Card', module).add('with card', () => <Card card={cards[0]} />);
 ```
 
+### Install Styled-Components
+
+```bash
+yarn add styled-components
+```
+
 * Create the `Card` container component
+* Download and import some SVGs
 * Import `styled` from `styled-components`
 
 ```js
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-import pencil from '../../assets/svg/pencil.svg';
-import bin from '../../assets/svg/bin.svg';
+import pencil from '../icons/pencil.svg';
+import bin from '../icons/bin.svg';
 
 const CardWrapper = styled.div`
   position: relative;
@@ -296,10 +258,111 @@ export default Icon;
 
 Source: [SVG sprite icons for React and Webpack]('https://codersmind.com/svg-sprite-icons-react-webpack/');
 
-### Install Styled-Components
+### Create `CardGrid` component
 
-```bash
-yarn add styled-components
+```js
+// src/components/CardGrid.test.js
+
+import React from 'react';
+import { shallow } from 'enzyme';
+
+import CardGrid from './CardGrid';
+
+const cards = [
+  {
+    id: '1521567322',
+    title: 'Space is the Place',
+    artist: 'Sun Ra',
+    art:
+      'https://upload.wikimedia.org/wikipedia/en/6/6c/Space_Is_The_Place_album_cover.jpg',
+    year: '1973',
+    rating: 5
+  },
+  {
+    id: '1521567405',
+    title: 'Lanquidity',
+    artist: 'Sun Ra',
+    art: 'https://upload.wikimedia.org/wikipedia/en/2/22/Lanquidity.jpg',
+    year: '1978',
+    rating: 4
+  }
+];
+
+describe('CardGrid', () => {
+  it('renders properly', () => {
+    const wrapper = shallow(<CardGrid cards={cards} />);
+
+    expect(wrapper).toMatchSnapshot();
+  });
+});
+```
+
+```js
+// src/components/CardGrid.js
+
+import React, { Component } from 'react';
+import styled from 'styled-components';
+
+import Card from './Card';
+
+const CardWrapper = styled.div`
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
+
+class CardGrid extends Component {
+  render() {
+    return (
+      <CardWrapper>
+        {this.props.cards.map((card, index) => (
+          <Card card={card} key={index} />
+        ))}
+      </CardWrapper>
+    );
+  }
+}
+
+export default CardGrid;
+```
+
+* Add `CardGrid` to stories
+
+```js
+import React from 'react';
+import { storiesOf } from '@storybook/react';
+
+import Card from '../components/Card';
+
+import CardGrid from '../components/CardGrid';
+
+const cards = [
+  {
+    id: '1521567322',
+    title: 'Space is the Place',
+    artist: 'Sun Ra',
+    art:
+      'https://upload.wikimedia.org/wikipedia/en/6/6c/Space_Is_The_Place_album_cover.jpg',
+    year: '1973',
+    rating: 5
+  },
+  {
+    id: '1521567405',
+    title: 'Lanquidity',
+    artist: 'Sun Ra',
+    art: 'https://upload.wikimedia.org/wikipedia/en/2/22/Lanquidity.jpg',
+    year: '1978',
+    rating: 4
+  }
+];
+
+storiesOf('Card', module).add('with card', () => <Card card={cards[0]} />);
+
+storiesOf('CardGrid', module).add('with two cards', () => (
+  <CardGrid cards={cards} />
+));
 ```
 
 ### Create

@@ -1,9 +1,7 @@
 import React from 'react';
-import { storiesOf } from '@storybook/react';
+import { shallow } from 'enzyme';
 
-import Card from '../components/Card';
-
-import CardGrid from '../components/CardGrid';
+import CardGrid from './CardGrid';
 
 const cards = [
   {
@@ -25,7 +23,10 @@ const cards = [
   }
 ];
 
-storiesOf('Card', module).add('with card', () => <Card card={cards[0]} />);
-storiesOf('CardGrid', module).add('with two cards', () => (
-  <CardGrid cards={cards} />
-));
+describe('CardGrid', () => {
+  it('renders properly', () => {
+    const wrapper = shallow(<CardGrid cards={cards} />);
+
+    expect(wrapper).toMatchSnapshot();
+  });
+});
