@@ -259,7 +259,7 @@ export default Icon;
 
 ```bash
 yarn eject
-npm i svg-sprite-html-webpack
+yarn add svg-sprite-html-webpack
 ```
 
 * Change `webpack.config`. These are insertions:
