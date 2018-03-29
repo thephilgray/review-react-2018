@@ -22,31 +22,6 @@ npx create-react-app <project-name>
 
 * Remove boilerplate
 
-### Install testing tools
-
-* Install `enzyme` and adapter
-
-```bash
-yarn add --dev enzyme enzyme-adapter-react-16 enzyme-to-json
-```
-
-* Create `setupTests.js` file for enzyme:
-
-```js
-// src/setupTests.js
-
-import { configure } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
-
-configure({ adapter: new Adapter() });
-```
-
-* Install `jest-styled-components`
-
-```bash
-yarn add --dev jest-styled-components
-```
-
 ### Create `index.css` and add base styles
 
 ```css
@@ -68,6 +43,36 @@ html {
   box-sizing: border-box;
   margin: 0;
 }
+```
+
+### Install testing tools
+
+* Install `enzyme` and adapter
+
+```bash
+yarn add --dev enzyme enzyme-adapter-react-16 enzyme-to-json
+```
+
+* Create `setupTests.js` file for enzyme:
+
+```js
+// src/setupTests.js
+
+import { configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+
+configure({ adapter: new Adapter() });
+```
+
+### Add Storybook
+
+* Storybook is like a styleguide generator but it also serves as a kind of visual testing interface because you can setup different use cases for each component and pass in different props and view the rendered component or error message in isolation.
+* Jest component tests are a little redundant at this point; so, I might just use Storybook to test all the UI components; I'll come back and write jest tests as needed
+
+```bash
+npm i -g @storybook/cli
+getstorybook
+yarn run storybook
 ```
 
 ### Create `App` component
@@ -133,17 +138,6 @@ class CardGrid extends Component {
 }
 
 export default CardGrid;
-```
-
-### Add Storybook
-
-* Storybook is like a styleguide generator but it also serves as a kind of visual testing interface because you can setup different use cases for each component and pass in different props and view the rendered component or error message in isolation.
-* Jest component tests are a little redundant at this point; so, I might just use Storybook to test all the UI components; I'll come back and write jest tests as needed
-
-```bash
-npm i -g @storybook/cli
-getstorybook
-yarn run storybook
 ```
 
 * Add `CardGrid` to stories
