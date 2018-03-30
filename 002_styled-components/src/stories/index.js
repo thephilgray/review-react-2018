@@ -4,6 +4,7 @@ import { storiesOf } from '@storybook/react';
 import Card from '../components/Card';
 
 import CardGrid from '../components/CardGrid';
+import StarRating from '../components/StarRating';
 
 const cards = [
   {
@@ -26,6 +27,9 @@ const cards = [
 ];
 
 storiesOf('Card', module).add('with card', () => <Card card={cards[0]} />);
+
 storiesOf('CardGrid', module).add('with two cards', () => (
   <CardGrid cards={cards} />
 ));
+
+storiesOf('StarRating', module).add('with on star', () => <StarRating />);

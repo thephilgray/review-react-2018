@@ -415,7 +415,12 @@ storiesOf('CardGrid', module).add('with two cards', () => (
 ));
 ```
 
-### Create
+### Create the `StarRating` component
+
+* It should be accessible-first
+
+```js
+```
 
 ## Redux Basic - 003_redux
 
