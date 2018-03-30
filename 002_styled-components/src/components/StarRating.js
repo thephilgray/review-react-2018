@@ -85,7 +85,7 @@ class StarRating extends React.Component {
               >
                 <Icon
                   glyph={starFull}
-                  noFill={!this.state.stars[i] && !this.state.hoverStars[i]}
+                  inverted={!this.state.stars[i] && !this.state.hoverStars[i]}
                   altText={`${i + 1} of ${this.state.stars.length} stars`}
                 />
               </StarRatingButton>

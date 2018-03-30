@@ -5,6 +5,7 @@ import Card from '../components/Card';
 
 import CardGrid from '../components/CardGrid';
 import StarRating from '../components/StarRating';
+import Icon from '../components/Icon';
 
 const cards = [
   {
@@ -31,6 +32,11 @@ storiesOf('Card', module).add('with card', () => <Card card={cards[0]} />);
 storiesOf('CardGrid', module).add('with two cards', () => (
   <CardGrid cards={cards} />
 ));
+
+storiesOf('Icon', module)
+  .add('default', () => <Icon />)
+  .add('with custom size', () => <Icon size="4em" />)
+  .add('with custom fill', () => <Icon fillColor="#000" />);
 
 storiesOf('StarRating', module)
   .add('default', () => <StarRating />)
