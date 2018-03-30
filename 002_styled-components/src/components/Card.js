@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 import Icon from './Icon';
+import StarRating from './StarRating';
 import pencil from '../icons/pencil.svg';
 import bin from '../icons/bin.svg';
 
@@ -22,12 +23,20 @@ const CardImage = styled.img`
 
 const CardBody = styled.div`
   display: flex;
-  flex-wrap: wrap;
 `;
 
 const CardDetails = styled.div`
   flex: 60%;
   padding: 1em;
+
+  & > h3 {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  & > h3 + p {
+    margin-top: 0;
+  }
 `;
 
 const CardControls = styled.div`
@@ -47,23 +56,19 @@ const CardButton = styled.button`
   }
 `;
 
-const CardIcon = styled.span`
-  width: 1.5em;
-  height: 1.5em;
-  display: inline-block;
-  background-image: url(${props => props.icon});
-  background-size: 100%;
-`;
-
 const Card = ({ card, placeholder = 'http://via.placeholder.com/300x300' }) => {
   return (
     <CardWrapper>
       <CardImage src={card.art || placeholder} />
       <CardBody>
         <CardDetails>
-          <p>{card.title}</p>
-          <p>{card.artist}</p>
-          <p>{card.year}</p>
+          <h3>{card.title}</h3>
+          <p>
+            {card.artist}
+            <br />
+            {card.year}
+          </p>
+          <StarRating rating={card.rating} />
         </CardDetails>
         <CardControls>
           <CardButton aria-label="Edit this album">

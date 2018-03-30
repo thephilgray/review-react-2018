@@ -3,22 +3,44 @@ import styled from 'styled-components';
 
 const Icon = styled.svg`
   color: inherit;
-  fill: currentColor;
+  stroke: currentColor;
+  fill: ${props => (props.noFill ? 'transparent' : 'currentColor')};
   width: inherit;
   height: inherit;
+  transition: all .25s ease-in-out;
 `;
-const IconSmall = styled.div`
+const SmallWrapper = styled.div`
   display: inline-block;
-  margin: 8px;
+  // margin: 8px;
   color: #1abc9c;
-  width: 16px;
-  height: 16px;
+  width: 2em;
+  height: 2em;
 `;
 
-export default ({ glyph }) => (
-  <IconSmall>
-    <Icon>
+const LargeWrapper = styled.div`
+display: inline-block;
+margin: 8px;
+color: #1abc9c;
+width: 24px;
+height: 24px;
+`;
+
+
+export const IconLarge = ({ glyph, noFill, altText }) => (
+  <LargeWrapper>
+    <Icon noFill={noFill}>
+      <title>{altText}</title>
       <use xlinkHref={glyph} />
     </Icon>
-  </IconSmall>
+  </LargeWrapper>
+);
+
+
+export default ({ glyph, noFill, altText }) => (
+  <SmallWrapper>
+    <Icon noFill={noFill}>
+      <title>{altText}</title>
+      <use xlinkHref={glyph} />
+    </Icon>
+  </SmallWrapper>
 );

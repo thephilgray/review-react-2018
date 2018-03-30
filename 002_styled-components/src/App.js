@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import Icon from './components/Icon';
-import pencil from '../src/icons/pencil.svg';
+
 import Card from './components/Card';
 
 const card = {

@@ -32,4 +32,8 @@ storiesOf('CardGrid', module).add('with two cards', () => (
   <CardGrid cards={cards} />
 ));
 
-storiesOf('StarRating', module).add('with on star', () => <StarRating />);
+storiesOf('StarRating', module).add('editable', () => (
+  <StarRating rating="2" editable/>
+)).add('read-only', () => (
+  <StarRating rating="2"/>
+));
