@@ -9,9 +9,10 @@ import bin from '../icons/bin.svg';
 const CardWrapper = styled.div`
   position: relative;
   width: 310px;
-  padding: 1em;
+  padding: 1em 0.5em;
   box-shadow: 1px 4px 2px 1px #aaa;
   margin: 0.5em;
+  background: #eee;
 `;
 
 const CardImage = styled.img`
@@ -23,6 +24,8 @@ const CardImage = styled.img`
 
 const CardBody = styled.div`
   display: flex;
+  background: #ddd;
+  padding: 0.25em;
 `;
 
 const CardDetails = styled.div`
@@ -64,7 +67,7 @@ const Card = ({ card, placeholder = 'http://via.placeholder.com/300x300' }) => {
         <CardDetails>
           <h3>{card.title}</h3>
           <p>
-            {card.artist}
+            by {card.artist}
             <br />
             {card.year}
           </p>

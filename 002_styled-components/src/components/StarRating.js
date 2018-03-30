@@ -1,8 +1,20 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import styled from 'styled-components';
 
 import Icon from './Icon';
 import starFull from '../icons/star-full.svg';
+
+const propTypes = {
+  rating: PropTypes.number,
+  editable: PropTypes.bool
+};
+
+const defaultProps = {
+  rating: 0,
+  editable: false
+};
 
 const StarRatingWrapper = styled.div``;
 
@@ -83,5 +95,8 @@ class StarRating extends React.Component {
     );
   }
 }
+
+StarRating.propTypes = propTypes;
+StarRating.defaultProps = defaultProps;
 
 export default StarRating;
