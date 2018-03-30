@@ -6,39 +6,22 @@ import Card from '../components/Card';
 import CardGrid from '../components/CardGrid';
 import StarRating from '../components/StarRating';
 import Icon from '../components/Icon';
+import cards from './sampleCards';
 
-const cards = [
-  {
-    id: '1521567322',
-    title: 'Space is the Place',
-    artist: 'Sun Ra',
-    art:
-      'https://upload.wikimedia.org/wikipedia/en/6/6c/Space_Is_The_Place_album_cover.jpg',
-    year: '1973',
-    rating: 5
-  },
-  {
-    id: '1521567405',
-    title: 'Lanquidity',
-    artist: 'Sun Ra',
-    art: 'https://upload.wikimedia.org/wikipedia/en/2/22/Lanquidity.jpg',
-    year: '1978',
-    rating: 4
-  }
-];
+storiesOf('Card', module)
+  .add('default', () => <Card />)
+  .add('with card', () => <Card card={cards[0]} />);
 
-storiesOf('Card', module).add('with card', () => <Card card={cards[0]} />);
-
-storiesOf('CardGrid', module).add('with two cards', () => (
-  <CardGrid cards={cards} />
-));
+storiesOf('CardGrid', module)
+  .add('default', () => <CardGrid />)
+  .add('with cards', () => <CardGrid cards={cards} />);
 
 storiesOf('Icon', module)
   .add('default', () => <Icon />)
-  .add('with custom size', () => <Icon size="4em" />)
-  .add('with custom fill', () => <Icon fillColor="#000" />);
+  .add('with size', () => <Icon size="4em" />)
+  .add('with fillColor', () => <Icon fillColor="#000" />);
 
 storiesOf('StarRating', module)
   .add('default', () => <StarRating />)
-  .add('read-only', () => <StarRating rating={2} />)
-  .add('editable', () => <StarRating editable />);
+  .add('with rating', () => <StarRating rating={2} />)
+  .add('with editable', () => <StarRating editable />);

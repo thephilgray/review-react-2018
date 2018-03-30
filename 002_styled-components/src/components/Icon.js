@@ -6,7 +6,7 @@ import questionIcon from '../icons/question.svg';
 
 const propTypes = {
   glyph: PropTypes.string,
-  size: PropTypes.sring,
+  size: PropTypes.string,
   inverted: PropTypes.bool,
   fillColor: PropTypes.string,
   strokeColor: PropTypes.string,

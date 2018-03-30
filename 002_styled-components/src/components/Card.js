@@ -1,10 +1,31 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import styled from 'styled-components';
 
 import Icon from './Icon';
 import StarRating from './StarRating';
 import pencil from '../icons/pencil.svg';
 import bin from '../icons/bin.svg';
+
+const propTypes = {
+  card: PropTypes.shape({
+    art: PropTypes.string,
+    title: PropTypes.string,
+    year: PropTypes.string,
+    rating: PropTypes.number
+  })
+};
+
+const defaultProps = {
+  card: {
+    art: 'http://via.placeholder.com/300x300',
+    title: 'Unknown title',
+    artist: 'Unknown artist',
+    year: 'Unknown year',
+    rating: 0
+  }
+};
 
 const CardWrapper = styled.div`
   position: relative;
@@ -59,10 +80,10 @@ const CardButton = styled.button`
   }
 `;
 
-const Card = ({ card, placeholder = 'http://via.placeholder.com/300x300' }) => {
+const Card = ({ card }) => {
   return (
     <CardWrapper>
-      <CardImage src={card.art || placeholder} />
+      <CardImage src={card.art} />
       <CardBody>
         <CardDetails>
           <h3>{card.title}</h3>
@@ -75,10 +96,10 @@ const Card = ({ card, placeholder = 'http://via.placeholder.com/300x300' }) => {
         </CardDetails>
         <CardControls>
           <CardButton aria-label="Edit this album">
-            <Icon glyph={pencil} />
+            <Icon glyph={pencil} fillColor="#000" />
           </CardButton>
           <CardButton aria-label="Delete this album">
-            <Icon glyph={bin} />
+            <Icon glyph={bin} fillColor="#000" />
           </CardButton>
         </CardControls>
       </CardBody>
@@ -86,4 +107,6 @@ const Card = ({ card, placeholder = 'http://via.placeholder.com/300x300' }) => {
   );
 };
 
+Card.propTypes = propTypes;
+Card.defaultProps = defaultProps;
 export default Card;

@@ -87,6 +87,8 @@ class StarRating extends React.Component {
                   glyph={starFull}
                   inverted={!this.state.stars[i] && !this.state.hoverStars[i]}
                   altText={`${i + 1} of ${this.state.stars.length} stars`}
+                  strokeColor="#000"
+                  fillColor="#000"
                 />
               </StarRatingButton>
             ))
