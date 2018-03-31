@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+import styledProps from 'styled-props';
+import { size } from '../styles.js';
+
 import questionIcon from '../icons/question.svg';
 
 const propTypes = {
@@ -15,7 +18,7 @@ const propTypes = {
 
 const defaultProps = {
   glyph: questionIcon,
-  size: '2em',
+  size: 'medium',
   inverted: false,
   fillColor: 'currentColor',
   strokeColor: 'currentColor',
@@ -33,11 +36,15 @@ const SvgIcon = styled.svg`
 const IconWrapper = styled.div`
   display: inline-block;
   color: #1abc9c;
-  width: ${props => props.size};
-  height: ${props => props.size};
+  width: ${styledProps(size.width, 'size')}em;
+  height: ${styledProps(size.height, 'size')}em;
 `;
 
-const Icon = ({ glyph, inverted, altText, size, fillColor, strokeColor }) => (
+IconWrapper.defaultProps = {
+  size: 'medium'
+};
+
+const Icon = ({ glyph, inverted, altText, fillColor, strokeColor, size }) => (
   <IconWrapper size={size}>
     <SvgIcon
       inverted={inverted}
