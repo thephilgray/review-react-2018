@@ -2,20 +2,13 @@ import React, { Component } from 'react';
 
 import Card from './components/Card';
 
-const card = {
-  id: '1521567322',
-  title: 'Space is the Place',
-  artist: 'Sun Ra',
-  art:
-    'https://upload.wikimedia.org/wikipedia/en/6/6c/Space_Is_The_Place_album_cover.jpg',
-  year: '1973',
-  rating: 5
-};
+import sampleCards from './stories/sampleCards';
+
 class App extends Component {
   render() {
     return (
       <div>
-        <Card card={card} />
+        <Card card={sampleCards[0]} />
       </div>
     );
   }

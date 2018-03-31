@@ -6,9 +6,10 @@ import CardGrid from '../components/CardGrid';
 import StarRating from '../components/StarRating';
 import Icon from '../components/Icon';
 import FormInput from '../components/FormInput';
-import Modal from '../components/Modal';
+import Overlay from '../components/Overlay';
 
 import cards from './sampleCards';
+import Navigation from '../components/Navigation';
 
 storiesOf('Card', module)
   .add('default', () => <Card />)
@@ -32,4 +33,12 @@ storiesOf('FormInput', module)
   .add('default', () => <FormInput />)
   .add('with fieldType number', () => <FormInput fieldType="number" />);
 
-storiesOf('Modal', module).add('default', () => <Modal />);
+storiesOf('Navigation', module).add('default', () => <Navigation />);
+
+storiesOf('Overlay', module)
+  .add('default', () => <Overlay />)
+  .add('with Navigation', () => (
+    <Overlay>
+      <Navigation />
+    </Overlay>
+  ));

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import styled from 'styled-components';
+import { hideVisually } from 'polished';
 
 const propTypes = {
   fieldName: PropTypes.string,
@@ -22,7 +23,9 @@ const FormInputWrapper = styled.div`
   }
 `;
 
-const FormLabel = styled.label``;
+const FormLabel = styled.label`
+  ${hideVisually()};
+`;
 
 const FormInputField = styled.input`
   border-radius: 2px;
