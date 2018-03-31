@@ -580,6 +580,14 @@ storiesOf('Icon', module)
 
 * TODO: The above is not really a good example
 
+### Create a Modal component
+
+* Add `polished` for tons of CSS helpers
+
+```bash
+yarn add polished
+```
+
 ## Redux Basic - 003_redux
 
 ### Create a new project with Create React App
