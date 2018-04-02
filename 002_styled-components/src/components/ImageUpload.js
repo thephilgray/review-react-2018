@@ -37,6 +37,7 @@ const ImageUploadContainer = styled.div`
 
 const ImageUploadDragArea = styled.div`
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   height: 250px;
@@ -48,6 +49,17 @@ const ImageUploadDragArea = styled.div`
 
   &:hover {
     background: rgba(221, 221, 221, 0.503);
+  }
+`;
+
+const ImageUploadStatusMessage = styled.div`
+  display: block;
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+
+  & > * {
+    width: 100%;
   }
 `;
 
@@ -119,7 +131,15 @@ class ImageUpload extends React.Component {
               {this.state.upload ? (
                 <ProgressBar progress={this.state.progress} />
               ) : (
-                <Icon glyph={cloudUploadIcon} fillColor="black" />
+                <ImageUploadStatusMessage>
+                  <Icon
+                    glyph={cloudUploadIcon}
+                    fillColor="black"
+                    size="large"
+                  />
+
+                  <h3 style={{ margin: 0, padding: 0 }}>Try me!</h3>
+                </ImageUploadStatusMessage>
               )}
             </ImageUploadDragArea>
           ) : null}
