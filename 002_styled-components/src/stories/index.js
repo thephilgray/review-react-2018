@@ -20,6 +20,9 @@ import Navigation from '../components/Navigation';
 import ProgressBar from '../components/ProgressBar';
 import ImageUpload from '../components/ImageUpload';
 
+import AddForm from '../containers/AddForm';
+import UserControls from '../components/UserControls';
+
 storiesOf('Card', module)
   .add('default', () => <Card />)
   .add('with card', () => <Card card={cards[0]} />);
@@ -90,3 +93,7 @@ storiesOf('ProgressBar', module)
   .add('with progress', () => <ProgressBar progress={88} />);
 
 storiesOf('ImageUpload', module).add('default', () => <ImageUpload />);
+
+storiesOf('UserControls', module).add('default', () => <UserControls />);
+
+storiesOf('AddForm', module).add('default', () => <AddForm />);
