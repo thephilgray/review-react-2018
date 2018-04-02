@@ -16,6 +16,7 @@ const LogoWrapper = styled.div`
   padding: 1em;
   text-align: center;
   cursor: pointer;
+  margin: 0 auto;
 `;
 
 const Logo = ({ image, title }) => {

@@ -2,6 +2,9 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { State, Store } from '@sambego/storybook-state';
 
+// experienced issues passing/setting state for 2 components with @sambego/storebook-state in the second NavBar example
+import { withState } from '@dump247/storybook-state';
+
 import '../index.css';
 
 import Card from '../components/Card';
@@ -10,6 +13,7 @@ import StarRating from '../components/StarRating';
 import Icon from '../components/Icon';
 import FormInput from '../components/FormInput';
 import Overlay from '../components/Overlay';
+import NavBar from '../components/NavBar';
 
 import cards from './sampleCards';
 import Navigation from '../components/Navigation';
@@ -45,7 +49,7 @@ storiesOf('Overlay', module)
       <Navigation />
     </Overlay>
   ))
-  .add('with toggle handler', () => {
+  .add('with toggleHandler', () => {
     const store = new Store({
       toggled: true
     });
@@ -60,3 +64,21 @@ storiesOf('Overlay', module)
       </div>
     );
   });
+
+storiesOf('NavBar', module)
+  .add('defualt', () => <NavBar />)
+  .add(
+    'with toggleHandler',
+    withState({ toggled: false }, store => {
+      const toggleOpen = () => store.set({ toggled: true });
+      const toggleClosed = () => store.set({ toggled: false });
+      return (
+        <div>
+          <NavBar {...store.state} toggleHandler={toggleOpen} />
+          <Overlay {...store.state} toggleHandler={toggleClosed}>
+            <Navigation />
+          </Overlay>
+        </div>
+      );
+    })
+  );

@@ -21,12 +21,11 @@ const defaultProps = {
 };
 
 const OverlayWrapper = styled.div`
+  height: 100vh;
+  width: 100vw;
   top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
   background: #000;
-  position: fixed;
+  position: ${props => (props.toggled ? 'absolute' : 'relative')}
   overflow: auto;
   z-index: 100;
   display: flex;
@@ -48,7 +47,7 @@ const OverlayContainer = styled.div`
   position: relative;
   transition: all 0.5s ease-out;
   transform: ${props =>
-    props.toggled ? 'translateX(0)' : 'translateX(-100vw)'};
+    props.toggled ? 'translateX(0)' : 'translateX(-101vw)'};
 `;
 
 const CloseButton = styled.button`
