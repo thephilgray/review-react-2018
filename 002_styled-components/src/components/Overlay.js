@@ -10,11 +10,14 @@ import Icon from './Icon';
 import cross from '../icons/cross.svg';
 
 const propTypes = {
-  backgroundOpacity: PropTypes.number
+  backgroundOpacity: PropTypes.number,
+  toggled: PropTypes.bool,
+  toggleHandler: PropTypes.func
 };
 
 const defaultProps = {
-  backgroundOpacity: 0.9
+  backgroundOpacity: 0.9,
+  toggled: false
 };
 
 const OverlayWrapper = styled.div`
@@ -29,6 +32,8 @@ const OverlayWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease-out;
+  opacity: ${props => (props.toggled ? 1 : 0)};
 `;
 
 const OverlayContainer = styled.div`
@@ -41,6 +46,9 @@ const OverlayContainer = styled.div`
   flex: 1;
   box-sizing: border-box;
   position: relative;
+  transition: all 0.5s ease-out;
+  transform: ${props =>
+    props.toggled ? 'translateX(0)' : 'translateX(-100vw)'};
 `;
 
 const CloseButton = styled.button`
@@ -72,23 +80,26 @@ const ContentContainer = styled.div`
   justify-content: center;
 `;
 
-const Overlay = props => {
-  return (
-    <OverlayWrapper>
-      <OverlayContainer primary role="dialog">
-        <CloseButton
-          role="button"
-          alt="Close menu"
-          aria-label="Toggle navigation off"
-        >
-          <CloseScreenReaderText>Toggle navigation</CloseScreenReaderText>
-          <Icon glyph={cross} fillColor="#fff" />
-        </CloseButton>
-        <ContentContainer>{props.children}</ContentContainer>
-      </OverlayContainer>
-    </OverlayWrapper>
-  );
-};
+class Overlay extends React.Component {
+  render() {
+    return (
+      <OverlayWrapper toggled={this.props.toggled}>
+        <OverlayContainer primary role="dialog" toggled={this.props.toggled}>
+          <CloseButton
+            role="button"
+            alt="Close menu"
+            aria-label="Toggle navigation off"
+            onClick={this.props.toggleHandler}
+          >
+            <CloseScreenReaderText>Toggle navigation</CloseScreenReaderText>
+            <Icon glyph={cross} fillColor="#fff" />
+          </CloseButton>
+          <ContentContainer>{this.props.children}</ContentContainer>
+        </OverlayContainer>
+      </OverlayWrapper>
+    );
+  }
+}
 
 Overlay.propTypes = propTypes;
 Overlay.defaultProps = defaultProps;

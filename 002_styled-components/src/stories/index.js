@@ -1,5 +1,6 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
+import { State, Store } from '@sambego/storybook-state';
 
 import '../index.css';
 
@@ -38,9 +39,24 @@ storiesOf('FormInput', module)
 storiesOf('Navigation', module).add('default', () => <Navigation />);
 
 storiesOf('Overlay', module)
-  .add('default', () => <Overlay />)
+  .add('default', () => <Overlay toggled />)
   .add('with Navigation', () => (
-    <Overlay>
+    <Overlay toggled>
       <Navigation />
     </Overlay>
-  ));
+  ))
+  .add('with toggle handler', () => {
+    const store = new Store({
+      toggled: true
+    });
+    const toggleOverlay = () => store.set({ toggled: false });
+    return (
+      <div>
+        <State store={store}>
+          <Overlay toggleHandler={toggleOverlay}>
+            <Navigation />
+          </Overlay>
+        </State>
+      </div>
+    );
+  });
