@@ -5,7 +5,9 @@ import styled from 'styled-components';
 import Icon from './Icon';
 import searchIcon from '../icons/search.svg';
 import sortAlphaAsc from '../icons/sort-alpha-asc.svg';
+import sortAlphaDesc from '../icons/sort-alpha-desc.svg';
 import sortAmountAsc from '../icons/sort-amount-asc.svg';
+import sortAmountDesc from '../icons/sort-amount-desc.svg';
 
 const UserControlsWrapper = styled.div`
   display: flex;
@@ -68,6 +70,30 @@ class UserControls extends React.Component {
     }
   };
 
+  sortAlphaHandler = () => {
+    this.setState(prevState => {
+      return {
+        search: { ...prevState.search, active: false },
+        sort: {
+          rating: { ...prevState.sort.rating, active: false },
+          alpha: { active: true, asc: !prevState.sort.alpha.asc }
+        }
+      };
+    });
+  };
+
+  sortRatingHandler = () => {
+    this.setState(prevState => {
+      return {
+        search: { ...prevState.search, active: false },
+        sort: {
+          alpha: { ...prevState.sort.alpha, active: false },
+          rating: { active: true, asc: !prevState.sort.rating.asc }
+        }
+      };
+    });
+  };
+
   render() {
     return (
       <UserControlsWrapper>
@@ -86,11 +112,17 @@ class UserControls extends React.Component {
         >
           <Icon glyph={searchIcon} fillColor="black" />
         </UserControlsButton>
-        <UserControlsButton>
-          <Icon glyph={sortAlphaAsc} fillColor="black" />
+        <UserControlsButton onClick={this.sortAlphaHandler}>
+          <Icon
+            glyph={this.state.sort.alpha.asc ? sortAlphaDesc : sortAlphaAsc}
+            fillColor="black"
+          />
         </UserControlsButton>
-        <UserControlsButton>
-          <Icon glyph={sortAmountAsc} fillColor="black" />
+        <UserControlsButton onClick={this.sortRatingHandler}>
+          <Icon
+            glyph={this.state.sort.rating.asc ? sortAmountAsc : sortAmountDesc}
+            fillColor="black"
+          />
         </UserControlsButton>
       </UserControlsWrapper>
     );
