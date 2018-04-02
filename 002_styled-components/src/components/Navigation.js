@@ -2,9 +2,16 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import Logo from '../graphics/logo-menu.svg';
+
 const NavigationWrapper = styled.div`
   justify-self: flex-start;
 `;
+
+const NavigationBranding = styled.div`
+  padding: 1em;
+`;
+
 const NavigationMenu = styled.nav`
   text-align: center;
   font-size: 2em;
@@ -26,6 +33,9 @@ const NavigationItem = styled.li`
 const NavigationOverlay = props => {
   return (
     <NavigationWrapper>
+      <NavigationBranding>
+        <img src={Logo} alt="Album Collector Logo" />
+      </NavigationBranding>
       <NavigationMenu role="navigation">
         <NavigationList>
           <NavigationItem>Home</NavigationItem>

@@ -60,7 +60,6 @@ class StarRating extends React.Component {
   mouseLeaveHandler = () => {
     if (!this.props.editable) return;
     this.setState(prevState => {
-      const newStars = prevState.stars;
       return { hoverStars: [false, false, false, false, false] };
     });
   };

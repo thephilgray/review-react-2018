@@ -1,6 +1,8 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 
+import '../index.css';
+
 import Card from '../components/Card';
 import CardGrid from '../components/CardGrid';
 import StarRating from '../components/StarRating';

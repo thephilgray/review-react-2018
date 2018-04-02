@@ -133,16 +133,18 @@ module.exports = {
           // "url" loader works just like "file" loader but it also embeds
           // assets smaller than specified size as data URLs to avoid requests.
           {
-            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
+            exclude: path.resolve(paths.appSrc, 'icons'),
             loader: require.resolve('url-loader'),
             options: {
               limit: 10000,
               name: 'static/media/[name].[hash:8].[ext]'
             }
           },
+
           {
             test: /\.svg?$/,
-            exclude: /node_modules/,
+            include: path.resolve(paths.appSrc, 'icons'),
             use: SvgSpriteHtmlWebpackPlugin.getLoader()
           },
 
