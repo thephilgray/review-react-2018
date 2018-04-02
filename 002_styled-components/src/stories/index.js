@@ -18,6 +18,7 @@ import NavBar from '../components/NavBar';
 import cards from './sampleCards';
 import Navigation from '../components/Navigation';
 import ProgressBar from '../components/ProgressBar';
+import ImageUpload from '../components/ImageUpload';
 
 storiesOf('Card', module)
   .add('default', () => <Card />)
@@ -87,3 +88,5 @@ storiesOf('NavBar', module)
 storiesOf('ProgressBar', module)
   .add('default', () => <ProgressBar />)
   .add('with progress', () => <ProgressBar progress={88} />);
+
+storiesOf('ImageUpload', module).add('default', () => <ImageUpload />);
