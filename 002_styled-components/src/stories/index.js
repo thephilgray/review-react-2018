@@ -96,4 +96,6 @@ storiesOf('ImageUpload', module).add('default', () => <ImageUpload />);
 
 storiesOf('UserControls', module).add('default', () => <UserControls />);
 
-storiesOf('AddForm', module).add('default', () => <AddForm />);
+storiesOf('AddForm', module)
+  .add('default', () => <AddForm />)
+  .add('with validation', () => <AddForm />);
