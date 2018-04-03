@@ -93,6 +93,14 @@ class UserControls extends React.Component {
       };
     });
   };
+  searchInputKeyHandler = e => {
+    if (e.keyCode === 27 || e.keyCode === 13) {
+      this.setState(prevState => {
+        return { ...{ search: { active: false, query: '' } } };
+      });
+      this.searchButton.focus();
+    }
+  };
 
   render() {
     return (
@@ -103,6 +111,7 @@ class UserControls extends React.Component {
           innerRef={el => {
             this.searchInput = el;
           }}
+          onKeyDown={this.searchInputKeyHandler}
         />
         <UserControlsButton
           onClick={this.searchButtonHandler}
