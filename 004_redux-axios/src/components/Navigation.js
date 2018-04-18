@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink, Link } from 'react-router-dom';
 
 import styled from 'styled-components';
 
@@ -26,9 +27,20 @@ const NavigationList = styled.ul`
 
 const NavigationItem = styled.li`
   cursor: pointer;
-  & > a {
-    color: #fff;
-    text-decoration: none;
+`;
+
+const StyledNavLink = styled(NavLink)`
+  color: #fff;
+  text-decoration: none;
+
+  &.active {
+    font-weight: 800;
+
+    li:before {
+       {
+        content: '> ';
+      }
+    }
   }
 `;
 
@@ -36,12 +48,18 @@ const NavigationOverlay = props => {
   return (
     <NavigationWrapper>
       <NavigationBranding>
-        <Logo image={MenuLogo} title="Album Collector Logo" />
+        <Link to="/">
+          <Logo image={MenuLogo} title="Album Collector Logo" />
+        </Link>
       </NavigationBranding>
       <NavigationMenu role="navigation">
         <NavigationList>
-          <NavigationItem>Home</NavigationItem>
-          <NavigationItem>Add</NavigationItem>
+          <StyledNavLink to="/" exact>
+            <NavigationItem>Home</NavigationItem>
+          </StyledNavLink>
+          <StyledNavLink to="/add" exact>
+            <NavigationItem>Add</NavigationItem>
+          </StyledNavLink>
         </NavigationList>
       </NavigationMenu>
     </NavigationWrapper>

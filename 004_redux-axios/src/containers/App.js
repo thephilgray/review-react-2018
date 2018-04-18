@@ -1,10 +1,11 @@
 import React from 'react';
 
-import AlbumContainer from './AlbumContainer';
 import NavBar from '../components/NavBar';
 import Overlay from '../components/Overlay';
 import Navigation from '../components/Navigation';
-class App extends React.Component {
+import { BrowserRouter as Router } from 'react-router-dom';
+import routes from '../routes';
+class Home extends React.Component {
   state = {
     toggled: false
   };
@@ -15,19 +16,21 @@ class App extends React.Component {
   };
   render() {
     return (
-      <div>
-        <Overlay
-          toggleHandler={this.toggleHandler}
-          toggled={this.state.toggled}
-        >
-          <Navigation />
-        </Overlay>
+      <Router>
+        <div>
+          <Overlay
+            toggleHandler={this.toggleHandler}
+            toggled={this.state.toggled}
+          >
+            <Navigation />
+          </Overlay>
 
-        <NavBar toggleHandler={this.toggleHandler} />
-        <AlbumContainer />
-      </div>
+          <NavBar toggleHandler={this.toggleHandler} />
+          {routes()}
+        </div>
+      </Router>
     );
   }
 }
 
-export default App;
+export default Home;

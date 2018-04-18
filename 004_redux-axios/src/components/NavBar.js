@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { hideVisually } from 'polished';
@@ -43,6 +43,10 @@ const HamburgerIconBar = styled.span`
   }
 `;
 
+const StyledLink = styled(Link)`
+  margin: 0 auto;
+`;
+
 const HamburgerScreenReaderText = styled.span`
   ${hideVisually()};
 `;
@@ -61,7 +65,9 @@ const NavBar = props => {
         <HamburgerIconBar />
         <HamburgerIconBar />
       </HamburgerButton>
-      <Logo image={logoSmall} />
+      <StyledLink to="/">
+        <Logo image={logoSmall} />
+      </StyledLink>
     </NavBarWrapper>
   );
 };

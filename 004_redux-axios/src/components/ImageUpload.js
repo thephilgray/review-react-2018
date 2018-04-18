@@ -63,10 +63,6 @@ const ImageUploadStatusMessage = styled.div`
   }
 `;
 
-const ImageUploadDragContent = styled.div`
-  width: 200px;
-`;
-
 const ImageUploadImage = styled.img`
   max-width: 100%;
   height: auto;
@@ -125,7 +121,7 @@ class ImageUpload extends React.Component {
         <ImageUploadContainer>
           {!this.state.art ? (
             <ImageUploadDragArea
-              aria-relevant
+              aria-relevant="additions"
               onClick={() => this.fileInput.click()}
             >
               {this.state.upload ? (

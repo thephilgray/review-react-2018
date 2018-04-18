@@ -82,13 +82,15 @@ const ContentContainer = styled.div`
 class Overlay extends React.Component {
   render() {
     return (
-      <OverlayWrapper toggled={this.props.toggled}>
+      <OverlayWrapper
+        toggled={this.props.toggled}
+        onClick={this.props.toggleHandler}
+      >
         <OverlayContainer primary role="dialog" toggled={this.props.toggled}>
           <CloseButton
             role="button"
             alt="Close menu"
             aria-label="Toggle navigation off"
-            onClick={this.props.toggleHandler}
           >
             <CloseScreenReaderText>Toggle navigation</CloseScreenReaderText>
             <Icon glyph={cross} fillColor="#fff" />
