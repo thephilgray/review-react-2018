@@ -7,6 +7,7 @@ import Icon from './Icon';
 import StarRating from './StarRating';
 import pencil from '../icons/pencil.svg';
 import bin from '../icons/bin.svg';
+import Spinner from './Spinner';
 
 const propTypes = {
   card: PropTypes.shape({
@@ -37,9 +38,13 @@ const CardWrapper = styled.div`
 `;
 
 const CardImage = styled.img`
-  flex: 100%;
   width: 100%;
   height: auto;
+`;
+
+const CardImageWrapper = styled.div`
+  flex: 100%;
+  width: 100%;
   position: relative;
 `;
 
@@ -80,32 +85,73 @@ const CardButton = styled.button`
   }
 `;
 
-const Card = ({ card }) => {
-  return (
-    <CardWrapper>
-      <CardImage src={card.art} />
-      <CardBody>
-        <CardDetails>
-          <h3>{card.title}</h3>
-          <p>
-            by {card.artist}
-            <br />
-            {card.year}
-          </p>
-          <StarRating rating={card.rating} />
-        </CardDetails>
-        <CardControls>
-          <CardButton aria-label="Edit this album">
-            <Icon glyph={pencil} fillColor="#000" />
-          </CardButton>
-          <CardButton aria-label="Delete this album">
-            <Icon glyph={bin} fillColor="#000" />
-          </CardButton>
-        </CardControls>
-      </CardBody>
-    </CardWrapper>
-  );
-};
+class Card extends React.Component {
+  state = {
+    imageError: false,
+    imageLoading: true
+  };
+
+  handleImageErrored = () => {
+    this.setState({ imageError: true });
+  };
+
+  handleImageLoaded = () => {
+    this.setState({ imageLoading: false });
+  };
+  render() {
+    const { card } = this.props;
+
+    let renderedImage = null;
+
+    const fallbackImage = (
+      <CardImage src="http://via.placeholder.com/300x300" />
+    );
+
+    const renderImage = () => {
+      renderedImage = (
+        <CardImage
+          src={card.art}
+          onError={this.handleImageErrored}
+          onLoad={this.handleImageLoaded}
+        />
+      );
+
+      if (this.state.imageError) {
+        renderedImage = fallbackImage;
+      }
+      return renderedImage;
+    };
+    const spinner = this.state.imageLoading ? <Spinner /> : null;
+
+    return (
+      <CardWrapper>
+        <CardImageWrapper>
+          {spinner}
+          {renderImage()}
+        </CardImageWrapper>
+        <CardBody>
+          <CardDetails>
+            <h3>{card.title}</h3>
+            <p>
+              by {card.artist}
+              <br />
+              {card.year}
+            </p>
+            <StarRating rating={card.rating} />
+          </CardDetails>
+          <CardControls>
+            <CardButton aria-label="Edit this album">
+              <Icon glyph={pencil} fillColor="#000" />
+            </CardButton>
+            <CardButton aria-label="Delete this album">
+              <Icon glyph={bin} fillColor="#000" />
+            </CardButton>
+          </CardControls>
+        </CardBody>
+      </CardWrapper>
+    );
+  }
+}
 
 Card.propTypes = propTypes;
 Card.defaultProps = defaultProps;

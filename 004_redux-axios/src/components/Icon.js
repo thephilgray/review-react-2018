@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import questionIcon from '../icons/question.svg';
 
 const propTypes = {
-  glyph: PropTypes.string,
+  glyph: PropTypes.object,
   size: PropTypes.string,
   inverted: PropTypes.bool,
   fillColor: PropTypes.string,
@@ -26,32 +26,32 @@ const SvgIcon = styled.svg`
   color: ${props => props.fillColor};
   stroke: ${props => props.strokeColor};
   fill: ${props => (props.inverted ? 'transparent' : props.fillColor)};
-  width: inherit;
-  height: inherit;
-  transition: all 0.25s ease-in-out;
-`;
-const IconWrapper = styled.div`
-  display: inline-block;
-  color: #1abc9c;
   width: ${props => props.size}px;
   height: ${props => props.size}px;
+  transition: all 0.25s ease-in-out;
 `;
 
-IconWrapper.defaultProps = {
-  size: 'medium'
-};
-
-const Icon = ({ glyph, inverted, altText, fillColor, strokeColor, size }) => (
-  <IconWrapper size={size}>
-    <SvgIcon
-      inverted={inverted}
-      fillColor={fillColor}
-      strokeColor={strokeColor}
-    >
-      {altText ? <title>{altText}</title> : null}
-      <use xlinkHref={glyph} />
-    </SvgIcon>
-  </IconWrapper>
+const Icon = ({
+  className,
+  children,
+  glyph,
+  inverted,
+  altText,
+  fillColor,
+  strokeColor,
+  size
+}) => (
+  <SvgIcon
+    inverted={inverted}
+    fillColor={fillColor}
+    strokeColor={strokeColor}
+    viewBox={`${glyph.viewBox}`}
+    size={size}
+    className={className}
+  >
+    <title>{altText ? altText : glyph.id}</title>
+    <use xlinkHref={`#${glyph.id}`} />
+  </SvgIcon>
 );
 
 Icon.propTypes = propTypes;

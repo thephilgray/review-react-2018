@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import Card from './Card';
+import Spinner from './Spinner';
 
 const propTypes = {
   cards: PropTypes.array,
@@ -20,21 +21,18 @@ const CardWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  position: relative;
 `;
 
 class CardGrid extends Component {
   render() {
-    return (
-      <CardWrapper>
-        {this.props.cards ? (
-          this.props.cards.map((card, index) => (
-            <Card card={card} key={index} />
-          ))
-        ) : (
-          <h2>{this.props.fallbackMessage}</h2>
-        )}
-      </CardWrapper>
+    const renderedCards = this.props.cards ? (
+      this.props.cards.map((card, index) => <Card card={card} key={index} />)
+    ) : (
+      <Spinner />
     );
+
+    return <CardWrapper>{renderedCards}</CardWrapper>;
   }
 }
 
