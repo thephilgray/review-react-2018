@@ -21,7 +21,7 @@ const defaultProps = {
 };
 
 const OverlayWrapper = styled.div`
-  height: 100vh;
+  height: ${props => (props.toggled ? '100vh' : 'auto')};
   width: 100vw;
   top: 0;
   background: #000;
@@ -47,7 +47,7 @@ const OverlayContainer = styled.div`
   position: relative;
   transition: all 0.5s ease-out;
   transform: ${props =>
-    props.toggled ? 'translateX(0)' : 'translateX(-101vw)'};
+    props.toggled ? 'translateX(0)' : 'translateX(-200vw)'};
 `;
 
 const CloseButton = styled.button`
