@@ -1,31 +1,33 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { fetchAlbums } from '../actions/';
-import CardGrid from '../components/CardGrid';
 
+import AlbumContainer from './AlbumContainer';
+import NavBar from '../components/NavBar';
+import Overlay from '../components/Overlay';
+import Navigation from '../components/Navigation';
 class App extends React.Component {
-  componentDidMount() {
-    this.props.onFetchAlbums();
-  }
+  state = {
+    toggled: false
+  };
+  toggleHandler = () => {
+    this.setState(prevState => {
+      return { toggled: !prevState.toggled };
+    });
+  };
   render() {
     return (
       <div>
-        <CardGrid cards={this.props.albums} />
+        <Overlay
+          toggleHandler={this.toggleHandler}
+          toggled={this.state.toggled}
+        >
+          <Navigation />
+        </Overlay>
+
+        <NavBar toggleHandler={this.toggleHandler} />
+        <AlbumContainer />
       </div>
     );
   }
 }
 
-const mapStateToProps = state => {
-  return {
-    albums: state.albums.albums
-  };
-};
-
-const mapDispatchToActions = dispatch => {
-  return {
-    onFetchAlbums: () => dispatch(fetchAlbums())
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToActions)(App);
+export default App;

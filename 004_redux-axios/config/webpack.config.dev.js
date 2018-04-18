@@ -138,6 +138,7 @@ module.exports = {
           },
           {
             test: /\.svg$/,
+            include: path.resolve(paths.appSrc, 'icons'),
             loader: 'svg-sprite-loader'
           },
           // Process JS with Babel.

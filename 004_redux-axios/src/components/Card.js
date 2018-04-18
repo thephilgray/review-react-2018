@@ -51,12 +51,11 @@ const CardImageWrapper = styled.div`
 const CardBody = styled.div`
   display: flex;
   background: #ddd;
-  padding: 0.25em;
+  padding: 0.5em;
 `;
 
 const CardDetails = styled.div`
   flex: 60%;
-  padding: 1em;
 
   & > h3 {
     margin: 0;
