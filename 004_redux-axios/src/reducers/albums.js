@@ -7,7 +7,7 @@ import {
 const albums = (state = {}, action) => {
   switch (action.type) {
     case ADD_ALBUM_SUCCESS:
-      const albumsWithNewAlbum = state.albums;
+      const albumsWithNewAlbum = [...state.albums];
       albumsWithNewAlbum.push(action.newAlbum);
       console.log(`${action.newAlbum.id} was added to ${albumsWithNewAlbum}`);
       return { ...state, albums: albumsWithNewAlbum };

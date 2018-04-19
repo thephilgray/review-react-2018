@@ -4,8 +4,7 @@
       "id": "1521567322",
       "title": "Space is the Place",
       "artist": "Sun Ra",
-      "art":
-        "https://upload.wikimedia.org/wikipedia/en/6/6c/Space_Is_The_Place_album_cover.jpg",
+      "art": "https://upload.wikimedia.org/wikipedia/en/6/6c/Space_Is_The_Place_album_cover.jpg",
       "year": "1973",
       "rating": 5
     },
@@ -16,6 +15,38 @@
       "art": "https://upload.wikimedia.org/wikipedia/en/2/22/Lanquidity.jpg",
       "year": "1978",
       "rating": 4
+    },
+    {
+      "id": "1524151599675",
+      "title": "Monorails and Satellites, Vol 1 & Vol 2",
+      "artist": "Sun Ra",
+      "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
+      "year": "1966",
+      "rating": 5
+    },
+    {
+      "id": "1524151601677",
+      "title": "Super-Sonic Jazz",
+      "artist": "Sun Ra",
+      "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
+      "year": "1956",
+      "rating": 4
+    },
+    {
+      "id": "1524151605322",
+      "title": "Hours After",
+      "artist": "Sun Ra",
+      "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
+      "year": "1986",
+      "rating": 3
+    },
+    {
+      "id": "1524151620880",
+      "title": "Somewhere Else",
+      "artist": "Sun Ra",
+      "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
+      "year": "1988-89",
+      "rating": 3
     }
   ]
 }

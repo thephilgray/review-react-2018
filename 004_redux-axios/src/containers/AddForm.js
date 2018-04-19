@@ -1,8 +1,12 @@
 import React from 'react';
-
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { addAlbum } from '../actions/';
 import FormInput from '../components/FormInput';
+
+import sampleData from '../sample_discography.json';
 
 const NewForm = styled.form`
   text-align: center;
@@ -19,7 +23,34 @@ const NewFormSubmitButton = styled.button`
   }
 `;
 
+const createNewAlbum = () => {
+  // for testing only
+  const newId = Date.now().toString();
+  const randomIndex = (max, min) =>
+    Math.floor(Math.random() * (max + 1 - min) + min);
+  const newAlbum = sampleData[randomIndex(sampleData.length, 0)];
+  const newYear = newAlbum['Recorded'];
+  const newTitle = newAlbum['Album'];
+  const newRating = randomIndex(5, 3);
+
+  return {
+    id: newId,
+    title: newTitle,
+    artist: 'Sun Ra',
+    art:
+      'https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg',
+    year: newYear,
+    rating: newRating
+  };
+};
+
 class AddForm extends React.Component {
+  onSubmitForm = e => {
+    e.preventDefault();
+    const newAlbum = createNewAlbum();
+    this.props.onAddAlbum(newAlbum);
+    this.setState({ submitted: true });
+  };
   state = {
     addForm: {
       art: {
@@ -85,7 +116,8 @@ class AddForm extends React.Component {
         touched: false
       }
     },
-    formIsValid: false
+    formIsValid: true,
+    submitted: false
   };
   render() {
     const formElementsArray = [];
@@ -96,7 +128,7 @@ class AddForm extends React.Component {
       });
     }
     return (
-      <NewForm onSubmit={e => e.preventDefault()}>
+      <NewForm onSubmit={this.onSubmitForm}>
         {formElementsArray.map(formElement => {
           return (
             <FormInput
@@ -111,12 +143,17 @@ class AddForm extends React.Component {
           );
         })}
 
-        <NewFormSubmitButton disabled={!this.state.addForm.formIsValid}>
-          Save
-        </NewFormSubmitButton>
+        <NewFormSubmitButton type="submit">Save</NewFormSubmitButton>
+        {this.state.submitted ? <Redirect to="/" /> : null}
       </NewForm>
     );
   }
 }
 
-export default AddForm;
+const mapDispatchToActions = dispatch => {
+  return {
+    onAddAlbum: newAlbum => dispatch(addAlbum(newAlbum))
+  };
+};
+
+export default connect(null, mapDispatchToActions)(AddForm);
