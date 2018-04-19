@@ -24,6 +24,18 @@ const NewFormSubmitButton = styled.button`
 class AddForm extends React.Component {
   state = {
     addForm: {
+      art: {
+        elementType: 'imageUpload',
+        elementConfig: {
+          alt: 'Upload an album cover'
+        },
+        value: '',
+        validation: {
+          required: true
+        },
+        valid: false,
+        touched: false
+      },
       title: {
         elementType: 'input',
         elementConfig: {
@@ -50,18 +62,7 @@ class AddForm extends React.Component {
         valid: false,
         touched: false
       },
-      art: {
-        elementType: 'imageUpload',
-        elementConfig: {
-          alt: 'Upload an album cover'
-        },
-        value: '',
-        validation: {
-          required: true
-        },
-        valid: false,
-        touched: false
-      },
+
       year: {
         elementType: 'input',
         elementConfig: {
@@ -78,22 +79,40 @@ class AddForm extends React.Component {
       rating: {
         elementType: 'starRating',
         elementConfig: {},
-        value: 0,
+        value: '0',
         validation: {
           required: true
         },
         valid: false,
         touched: false
-      },
-      formIsValid: false
-    }
+      }
+    },
+    formIsValid: false
   };
   render() {
+    const formElementsArray = [];
+    for (let key in this.state.addForm) {
+      formElementsArray.push({
+        id: key,
+        config: this.state.addForm[key]
+      });
+    }
     return (
       <NewForm onSubmit={e => e.preventDefault()}>
-        <ImageUpload />
-        <FormInput />
-        <StarRating editable />
+        {formElementsArray.map(formElement => {
+          return (
+            <FormInput
+              key={formElement.id}
+              elementType={formElement.config.elementType}
+              elementConfig={formElement.config.elementConfig}
+              value={formElement.config.value}
+              validation={formElement.config.validation}
+              valid={formElement.config.valid}
+              touched={formElement.config.touched}
+            />
+          );
+        })}
+
         <NewFormSubmitButton disabled={!this.state.addForm.formIsValid}>
           Save
         </NewFormSubmitButton>

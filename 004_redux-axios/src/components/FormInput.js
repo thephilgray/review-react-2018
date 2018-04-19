@@ -4,14 +4,39 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { hideVisually } from 'polished';
 
+import ImageUpload from './ImageUpload';
+import StarRating from './StarRating';
+
 const propTypes = {
   fieldName: PropTypes.string,
-  fieldType: PropTypes.string
+  fieldType: PropTypes.string,
+  elementType: PropTypes.string,
+  elementConfig: PropTypes.shape({
+    type: PropTypes.string,
+    placeholder: PropTypes.string
+  }),
+  value: PropTypes.string,
+  validation: PropTypes.shape({
+    required: PropTypes.bool
+  }),
+  valid: PropTypes.bool,
+  touched: PropTypes.bool
 };
 
 const defaultProps = {
   fieldName: 'field name',
-  fieldType: 'text'
+  fieldType: 'text',
+  elementType: 'input',
+  elementConfig: {
+    type: 'text',
+    placeholder: 'field name'
+  },
+  value: '',
+  validation: {
+    required: false
+  },
+  valid: false,
+  touched: false
 };
 
 const FormInputWrapper = styled.div`
@@ -45,18 +70,41 @@ const capitalizeFirstCharacters = str => {
   return firstCharacter.toUpperCase() + otherCharacters.join('');
 };
 
-const FormInput = ({ fieldName, fieldType }) => {
-  const displayFieldName = capitalizeFirstCharacters(fieldName);
-  return (
-    <FormInputWrapper>
-      <FormLabel>{displayFieldName}</FormLabel>
-      <FormInputField
-        placeholder={displayFieldName}
-        name={fieldName}
-        type={fieldType}
-      />
-    </FormInputWrapper>
-  );
+const FormInput = ({
+  fieldName,
+  fieldType,
+  elementType,
+  elementConfig,
+  value,
+  validation,
+  valid,
+  touched
+}) => {
+  const displayFieldName = elementConfig.placeholder
+    ? capitalizeFirstCharacters(elementConfig.placeholder)
+    : null;
+
+  const fieldSwitch = () => {
+    switch (elementType) {
+      case 'imageUpload':
+        return <ImageUpload />;
+      case 'starRating':
+        return <StarRating editable />;
+      default:
+        return (
+          <FormInputWrapper>
+            <FormLabel>{displayFieldName}</FormLabel>
+            <FormInputField
+              placeholder={displayFieldName}
+              name={fieldName}
+              type={fieldType}
+            />
+          </FormInputWrapper>
+        );
+    }
+  };
+
+  return <FormInputWrapper>{fieldSwitch()}</FormInputWrapper>;
 };
 
 FormInput.propTypes = propTypes;

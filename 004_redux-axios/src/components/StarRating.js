@@ -16,7 +16,9 @@ const defaultProps = {
   editable: false
 };
 
-const StarRatingWrapper = styled.div``;
+const StarRatingWrapper = styled.div`
+  margin: 1em 0;
+`;
 
 const StarRatingButton = styled.button`
   background: transparent;
