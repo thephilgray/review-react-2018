@@ -3,8 +3,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 import FormInput from '../components/FormInput';
-import ImageUpload from '../components/ImageUpload';
-import StarRating from '../components/StarRating';
 
 const NewForm = styled.form`
   text-align: center;

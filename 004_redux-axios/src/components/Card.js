@@ -2,6 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import styled from 'styled-components';
+import { connect } from 'react-redux';
+
+import { deleteAlbum } from '../actions';
 
 import Icon from './Icon';
 import StarRating from './StarRating';
@@ -97,6 +100,11 @@ class Card extends React.Component {
   handleImageLoaded = () => {
     this.setState({ imageLoading: false });
   };
+
+  handleAlbumDelete = id => {
+    this.props.onDeleteAlbum(id);
+  };
+
   render() {
     const { card } = this.props;
 
@@ -142,7 +150,10 @@ class Card extends React.Component {
             <CardButton aria-label="Edit this album">
               <Icon glyph={pencil} fillColor="#000" />
             </CardButton>
-            <CardButton aria-label="Delete this album">
+            <CardButton
+              aria-label="Delete this album"
+              onClick={() => this.handleAlbumDelete(card.id)}
+            >
               <Icon glyph={bin} fillColor="#000" />
             </CardButton>
           </CardControls>
@@ -152,6 +163,12 @@ class Card extends React.Component {
   }
 }
 
+const mapDispatchToActions = dispatch => {
+  return {
+    onDeleteAlbum: albumId => dispatch(deleteAlbum(albumId))
+  };
+};
+
 Card.propTypes = propTypes;
 Card.defaultProps = defaultProps;
-export default Card;
+export default connect(null, mapDispatchToActions)(Card);
