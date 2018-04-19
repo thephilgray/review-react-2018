@@ -38,6 +38,14 @@ const CardWrapper = styled.div`
   box-shadow: 1px 4px 2px 1px #aaa;
   margin: 0.5em;
   background: #eee;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    box-shadow: 1px 4px 2px 2px #aaa;
+  }
 `;
 
 const CardImage = styled.img`
@@ -46,27 +54,37 @@ const CardImage = styled.img`
 `;
 
 const CardImageWrapper = styled.div`
-  flex: 100%;
-  width: 100%;
   position: relative;
+  height: 294px;
+  width: 294px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const CardBody = styled.div`
   display: flex;
   background: #ddd;
   padding: 0.5em;
+  width: 100%;
 `;
 
 const CardDetails = styled.div`
   flex: 60%;
 
-  & > h3 {
+  h3 {
     margin: 0;
     line-height: 1.5;
+    word-break: break-word;
+  }
+
+  p {
+    margin: 0;
   }
 
   & > h3 + p {
     margin-top: 0;
+    word-break: break-all;
   }
 `;
 
@@ -139,11 +157,8 @@ class Card extends React.Component {
         <CardBody>
           <CardDetails>
             <h3>{card.title}</h3>
-            <p>
-              by {card.artist}
-              <br />
-              {card.year}
-            </p>
+            <p>by {card.artist}</p>
+            <p>{card.year}</p>
             <StarRating rating={card.rating} />
           </CardDetails>
           <CardControls>

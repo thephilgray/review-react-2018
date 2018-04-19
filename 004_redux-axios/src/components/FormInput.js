@@ -10,12 +10,12 @@ import StarRating from './StarRating';
 const propTypes = {
   fieldName: PropTypes.string,
   fieldType: PropTypes.string,
-  elementType: PropTypes.string,
+
   elementConfig: PropTypes.shape({
     type: PropTypes.string,
     placeholder: PropTypes.string
   }),
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   validation: PropTypes.shape({
     required: PropTypes.bool
   }),
@@ -26,7 +26,7 @@ const propTypes = {
 const defaultProps = {
   fieldName: 'field name',
   fieldType: 'text',
-  elementType: 'input',
+
   elementConfig: {
     type: 'text',
     placeholder: 'field name'
@@ -65,39 +65,39 @@ const FormInputField = styled.input`
   box-sizing: border-box;
 `;
 
-const capitalizeFirstCharacters = str => {
-  const [firstCharacter, ...otherCharacters] = str;
-  return firstCharacter.toUpperCase() + otherCharacters.join('');
-};
+// const capitalizeFirstCharacters = str => {
+//   const [firstCharacter, ...otherCharacters] = str;
+//   return firstCharacter.toUpperCase() + otherCharacters.join('');
+// };
+// const displayFieldName = elementConfig.placeholder
+//   ? capitalizeFirstCharacters(elementConfig.placeholder)
+//   : null;
 
 const FormInput = ({
-  fieldName,
-  fieldType,
-  elementType,
+  name,
   elementConfig,
   value,
   validation,
   valid,
-  touched
+  touched,
+  changed
 }) => {
-  const displayFieldName = elementConfig.placeholder
-    ? capitalizeFirstCharacters(elementConfig.placeholder)
-    : null;
-
   const fieldSwitch = () => {
-    switch (elementType) {
+    switch (elementConfig.type) {
       case 'imageUpload':
         return <ImageUpload />;
       case 'starRating':
-        return <StarRating editable />;
+        return <StarRating editable changed={changed} />;
       default:
         return (
           <FormInputWrapper>
-            <FormLabel>{displayFieldName}</FormLabel>
+            <FormLabel>{elementConfig.placeholder}</FormLabel>
             <FormInputField
-              placeholder={displayFieldName}
-              name={fieldName}
-              type={fieldType}
+              placeholder={elementConfig.placeholder}
+              name={name}
+              type={elementConfig.type}
+              onChange={changed}
+              value={value}
             />
           </FormInputWrapper>
         );

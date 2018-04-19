@@ -23,45 +23,38 @@ const NewFormSubmitButton = styled.button`
   }
 `;
 
-const createNewAlbum = () => {
+const createNewAlbum = ({ art, title, artist, year, rating }) => {
   // for testing only
   const newId = Date.now().toString();
   const randomIndex = (max, min) =>
     Math.floor(Math.random() * (max + 1 - min) + min);
   const newAlbum = sampleData[randomIndex(sampleData.length, 0)];
-  const newYear = newAlbum['Recorded'];
-  const newTitle = newAlbum['Album'];
-  const newRating = randomIndex(5, 3);
+  const newArtist = artist || 'Sun Ra';
+  const newArt =
+    art ||
+    'https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg';
+  const newTitle = title || newAlbum['Album'];
+  const newYear = year || newAlbum['Recorded'];
+  const newRating = rating || randomIndex(5, 3);
 
   return {
     id: newId,
     title: newTitle,
-    artist: 'Sun Ra',
-    art:
-      'https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg',
+    artist: newArtist,
+    art: newArt,
     year: newYear,
     rating: newRating
   };
 };
 
 class AddForm extends React.Component {
-  onSubmitForm = e => {
-    e.preventDefault();
-    const newAlbum = createNewAlbum();
-    this.props.onAddAlbum(newAlbum);
-    this.setState({ submitted: true });
-  };
   state = {
     addForm: {
       art: {
-        elementType: 'imageUpload',
         elementConfig: {
-          alt: 'Upload an album cover'
+          type: 'imageUpload'
         },
         value: '',
-        validation: {
-          required: true
-        },
         valid: false,
         touched: false
       },
@@ -72,52 +65,79 @@ class AddForm extends React.Component {
           placeholder: 'Album Title'
         },
         value: '',
-        validation: {
-          required: true
-        },
         valid: false,
         touched: false
       },
       artist: {
-        elementType: 'input',
         elementConfig: {
           type: 'text',
           placeholder: 'Artist'
         },
         value: '',
-        validation: {
-          required: true
-        },
         valid: false,
         touched: false
       },
 
       year: {
-        elementType: 'input',
         elementConfig: {
           type: 'text',
           placeholder: 'Year Released'
         },
         value: '',
-        validation: {
-          required: true
-        },
         valid: false,
         touched: false
       },
       rating: {
-        elementType: 'starRating',
-        elementConfig: {},
-        value: '0',
-        validation: {
-          required: true
+        elementConfig: {
+          type: 'starRating'
         },
+        value: 0,
         valid: false,
         touched: false
       }
     },
     formIsValid: true,
     submitted: false
+  };
+
+  inputChangedHandler = (event, inputIdentifier, payload) => {
+    const updatedForm = {
+      ...this.state.addForm
+    };
+
+    const updatedFormElement = {
+      ...updatedForm[inputIdentifier]
+    };
+
+    if (payload) {
+      updatedFormElement.value = payload;
+    } else {
+      updatedFormElement.value = event.target.value;
+    }
+    updatedFormElement.touched = true;
+    updatedForm[inputIdentifier] = updatedFormElement;
+
+    let formIsValid = true;
+    // check if form is valid
+
+    this.setState({
+      addForm: updatedForm,
+      formIsValid: formIsValid
+    });
+  };
+
+  onSubmitForm = e => {
+    e.preventDefault();
+    const updatedValues = Object.keys(this.state.addForm).reduce(
+      (coll, curr) => {
+        coll[curr] = this.state.addForm[curr].value;
+        return coll;
+      },
+      {}
+    );
+    const newAlbum = createNewAlbum(updatedValues);
+    this.props.onAddAlbum(newAlbum);
+    this.setState({ submitted: true });
   };
   render() {
     const formElementsArray = [];
@@ -133,12 +153,15 @@ class AddForm extends React.Component {
           return (
             <FormInput
               key={formElement.id}
-              elementType={formElement.config.elementType}
+              name={formElement.id}
               elementConfig={formElement.config.elementConfig}
               value={formElement.config.value}
               validation={formElement.config.validation}
               valid={formElement.config.valid}
               touched={formElement.config.touched}
+              changed={(event, payload) =>
+                this.inputChangedHandler(event, formElement.id, payload)
+              }
             />
           );
         })}

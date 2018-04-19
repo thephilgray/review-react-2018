@@ -8,7 +8,8 @@ import starFull from '../icons/star-full.svg';
 
 const propTypes = {
   rating: PropTypes.number,
-  editable: PropTypes.bool
+  editable: PropTypes.bool,
+  changed: PropTypes.func
 };
 
 const defaultProps = {
@@ -43,10 +44,11 @@ class StarRating extends React.Component {
 
   calculateNewRating = arr => arr.filter(Boolean).length;
 
-  clickHandler = index => {
+  clickHandler = (index, event) => {
+    event.preventDefault();
     this.setState(({ stars }) => {
       const newStars = this.updatedStars(index, stars);
-      // console.log(this.calculateNewRating(newStars)); // update rating in store
+      this.props.changed(null, this.calculateNewRating(newStars)); // update rating in store
       return { stars: newStars };
     });
   };
@@ -76,7 +78,7 @@ class StarRating extends React.Component {
         {this.state.stars
           ? this.state.stars.map((star, i) => (
               <StarRatingButton
-                onClick={() => this.clickHandler(i)}
+                onClick={e => this.clickHandler(i, e)}
                 key={i}
                 aria-labelledby="star"
                 aria-pressed={this.state.stars[i]}
