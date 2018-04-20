@@ -89,7 +89,7 @@ class ImageUpload extends React.Component {
 
   onUpload = () => {
     console.log('uploading...');
-    const uploadFileFunction = process.env.REACT_APP_UPLOAD_FILE_FUNCTION;
+    const uploadFileFunction = process.env.REACT_APP_UPLOAD_FILE_FUNCTION; // needs to be set in .env
     const fd = new FormData();
     fd.append('file', this.state.upload, this.state.upload.name);
 

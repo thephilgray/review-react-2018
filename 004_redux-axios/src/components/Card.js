@@ -51,6 +51,11 @@ const CardWrapper = styled.div`
 const CardImage = styled.img`
   width: 100%;
   height: auto;
+
+  // option: cover image instead; must remove width above
+  // ideally, we will handle cropping and resizing the image from the user on the server
+  // min-width: 100%;
+  // object-fit: cover;
 `;
 
 const CardImageWrapper = styled.div`
@@ -60,6 +65,9 @@ const CardImageWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  // option: cover image instead
+  // overflow: hidden;
 `;
 
 const CardBody = styled.div`
