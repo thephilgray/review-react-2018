@@ -6,6 +6,7 @@ import Icon from './Icon';
 import ProgressBar from './ProgressBar';
 
 import cloudUploadIcon from '../icons/cloud-upload.svg';
+import axios from 'axios';
 
 const ImageUploadWrapper = styled.div``;
 
@@ -78,32 +79,55 @@ class ImageUpload extends React.Component {
     progress: 0,
     show: true
   };
-  onFileSelected = e => {
-    this.upload = e.target.files[0];
-    this.setState({ upload: e.target.files[0] });
+  onFileSelected = async e => {
+    console.log(e.target.files[0]);
+    await this.setState({ upload: e.target.files[0] });
+
+    console.log(this.state.upload, this.state);
     this.onUpload();
-  };
-
-  loadArt = () => {
-    console.log('art loaded');
-    this.setState(() => {
-      return { art: 'https://placebear.com/g/300/300' };
-    });
-  };
-
-  onCompleteUpload = () => {
-    console.log('complete');
-    this.setState(() => {
-      return {
-        progress: 100
-      };
-    });
-    setTimeout(this.loadArt, 1000);
   };
 
   onUpload = () => {
     console.log('uploading...');
-    setTimeout(this.onCompleteUpload, 1000);
+    const uploadFileFunction = process.env.REACT_APP_UPLOAD_FILE_FUNCTION;
+    const fd = new FormData();
+    fd.append('file', this.state.upload, this.state.upload.name);
+
+    axios
+      .post(uploadFileFunction, fd, {
+        onUploadProgress: uploadEvent => {
+          console.log(uploadEvent);
+          this.setState({
+            progress: Math.round(uploadEvent.loaded / uploadEvent.total * 100)
+          });
+        }
+      })
+      .then(async res => {
+        await this.setState({
+          art: res.data.url[0]
+        });
+        if (this.state.art) {
+          this.props.changed(null, this.state.art); // the first argument is the event, which is not needed here
+          this.onCompleteUpload();
+        }
+      });
+  };
+
+  onCompleteUpload = async () => {
+    console.log('complete');
+    await this.setState(() => {
+      return {
+        progress: 100
+      };
+    });
+    this.loadArt();
+  };
+
+  loadArt = () => {
+    console.log('art loaded');
+    // this.setState(() => {
+    //   return { art: 'https://placebear.com/g/300/300' };
+    // });
   };
   render() {
     return (

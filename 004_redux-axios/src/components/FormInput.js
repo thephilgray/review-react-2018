@@ -85,7 +85,7 @@ const FormInput = ({
   const fieldSwitch = () => {
     switch (elementConfig.type) {
       case 'imageUpload':
-        return <ImageUpload />;
+        return <ImageUpload changed={changed} />;
       case 'starRating':
         return <StarRating editable changed={changed} />;
       default:

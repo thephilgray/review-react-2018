@@ -23,6 +23,46 @@
       "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
       "year": "1966",
       "rating": 5
+    },
+    {
+      "id": "1524174002479",
+      "title": "Test",
+      "artist": "Sun Ra 2",
+      "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
+      "year": "1950",
+      "rating": 4
+    },
+    {
+      "id": "1524215181333",
+      "title": "Jazz in Silhouette",
+      "artist": "Sun Ra",
+      "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
+      "year": "1959",
+      "rating": 4
+    },
+    {
+      "id": "1524215311667",
+      "title": "The Nubians of Plutonia (aka The Lady with the Golden Stockings)",
+      "artist": "Sun Ra",
+      "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
+      "year": "1958-59",
+      "rating": 5
+    },
+    {
+      "id": "1524215560229",
+      "title": "Astro Black",
+      "artist": "Sun Ra",
+      "art": "https://storage.googleapis.com/fb-cloud-functions-e49d0.appspot.com/518036.jpg?GoogleAccessId=firebase-adminsdk-du6a0@fb-cloud-functions-e49d0.iam.gserviceaccount.com&Expires=1742169600&Signature=Ssu922dx16c0KCBv6e1OV7Uw%2F8HbFHui1eTBr807xPj%2FxPatTY0D1Xhy83GrdoaGn1552EqC2c82Dje4aMtzyObtC%2BMslf3Qpt6S%2Br1GEbKKdutG3%2B0Lke7XpNnnPLOfmzJM7Nm8eJXWCal5Eq8MVK8uGgJWmg9DY9wyXcE88rq2nucuvXAdJ7Ke619xJ5AILQnJQdRu6qzrg0hJpz%2FIu8fgpNRS5FFt2T3ZReSp2G50b61YW9V%2Be15LreeEddZ7zNUeUYOltgl%2BLssIcjbAEkbyJIsxpb5DtFi5LOHRLlH0n4ggMtjOr6ZZ03bpsK7nT15JNJ%2B1XfhWUaRqvoLHSA%3D%3D",
+      "year": "1972",
+      "rating": 4
+    },
+    {
+      "id": "1524215799272",
+      "title": "Coffee",
+      "artist": "Someone on Unsplash",
+      "art": "https://storage.googleapis.com/fb-cloud-functions-e49d0.appspot.com/tanja-heffner-509140-unsplash.jpg?GoogleAccessId=firebase-adminsdk-du6a0@fb-cloud-functions-e49d0.iam.gserviceaccount.com&Expires=1742169600&Signature=iH24crpzMp2mxT0KPlL%2FjfnAlhAz331tYCdxwh1pnvfids3LR%2FvA2GP%2B5eKWSzpngEdbl6kvdeN3UF2LWdSiAAd9zhJtEBQSNMAxcWE2WL4WQR5fLn3tVHXGJLbr07nwJXBZNe8%2Bn1wRZq%2B%2BGcgpWScs0iVBYT3uEgQpsBjzMQDrC3qm3xNeUXfdQCACzNxqZrZZZQlZN5AA5BZ6fDkUWG2CzhXfeH%2Fj7Z8KKZEzHTljzoAnkA15klUMOYRu9RBm3hEx4IuHvU0idIGQYDoBuLc91B0H9zEnE0vJ9RIBiq37pQMtxUSYFpaP1YQ%2Bp9mawBO5XXDypQ2TcaSuB3PKkA%3D%3D",
+      "year": "2015",
+      "rating": 5
     }
   ]
 }
