@@ -68,7 +68,7 @@ const CardImageWrapper = styled.div`
   align-items: center;
 
   // option: cover image instead
-  // overflow: hidden;
+  overflow: hidden;
 `;
 
 const CardBody = styled.div`
@@ -160,7 +160,7 @@ class Card extends React.Component {
     return (
       <CardWrapper>
         <CardImageWrapper>
-          {spinner}
+          {!this.state.imageError ? spinner : null}
           {renderImage()}
         </CardImageWrapper>
         <CardBody>

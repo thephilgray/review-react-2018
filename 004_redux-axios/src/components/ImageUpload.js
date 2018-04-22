@@ -34,6 +34,7 @@ const ImageUploadContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 `;
 
 const ImageUploadDragArea = styled.div`
@@ -41,6 +42,7 @@ const ImageUploadDragArea = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+
   height: 250px;
   width: 250px;
   background: rgba(221, 221, 221, 0.303);
@@ -86,7 +88,7 @@ class ImageUpload extends React.Component {
 
   onFileSelected = async e => {
     console.log(e.target.files[0]);
-    await this.setState({ upload: e.target.files[0] });
+    await this.setState({ upload: e.target.files[0], art: '', progress: 0 });
 
     console.log(this.state.upload, this.state);
     this.onUpload();
@@ -148,26 +150,15 @@ class ImageUpload extends React.Component {
           onChange={this.onFileSelected}
         />
         <ImageUploadContainer>
-          {!this.state.art ? (
-            <ImageUploadDragArea
-              aria-relevant="additions"
-              onClick={() => this.fileInput.click()}
-            >
-              {this.state.upload ? (
-                <ProgressBar progress={this.state.progress} />
-              ) : (
-                <ImageUploadStatusMessage>
-                  <Icon
-                    glyph={cloudUploadIcon}
-                    fillColor="black"
-                    size="large"
-                  />
+          <ImageUploadDragArea
+            aria-relevant="additions"
+            onClick={() => this.fileInput.click()}
+          >
+            {!this.state.art && this.state.upload ? (
+              <ProgressBar progress={this.state.progress} />
+            ) : null}
+          </ImageUploadDragArea>
 
-                  <h3 style={{ margin: 0, padding: 0 }}>Try me!</h3>
-                </ImageUploadStatusMessage>
-              )}
-            </ImageUploadDragArea>
-          ) : null}
           {this.state.art ? (
             <ImageUploadImage src={this.state.art} />
           ) : (

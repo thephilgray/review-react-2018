@@ -15,9 +15,10 @@ to {
 
 const SpinnerIcon = styled(Icon)`
   display: block;
+  position: absolute;
   animation: ${rotate360} 2s linear infinite;
   margin: auto;
-  padding: 1em;
+  //  padding: 1em;
 `;
 
 const Spinner = () => {

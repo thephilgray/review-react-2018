@@ -65,6 +65,10 @@ const FormInputField = styled.input`
   box-sizing: border-box;
 `;
 
+const ValidationMessage = styled.p`
+  color: #500;
+`;
+
 // const capitalizeFirstCharacters = str => {
 //   const [firstCharacter, ...otherCharacters] = str;
 //   return firstCharacter.toUpperCase() + otherCharacters.join('');
@@ -99,6 +103,11 @@ const FormInput = ({
               onChange={changed}
               value={value}
             />
+            {touched && !valid ? (
+              <ValidationMessage>
+                {elementConfig.placeholder} is required.
+              </ValidationMessage>
+            ) : null}
           </FormInputWrapper>
         );
     }

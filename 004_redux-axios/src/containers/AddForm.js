@@ -7,29 +7,29 @@ import sampleData from '../sample_discography.json';
 import axios from '../lib/albums';
 import Form from '../components/Form';
 
-const createNewAlbum = ({ art, title, artist, year, rating }) => {
-  // for testing only
-  const newId = Date.now().toString();
-  const randomIndex = (max, min) =>
-    Math.floor(Math.random() * (max + 1 - min) + min);
-  const newAlbum = sampleData[randomIndex(sampleData.length, 0)];
-  const newArtist = artist || 'Sun Ra';
-  const newArt =
-    art ||
-    'https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg';
-  const newTitle = title || newAlbum['Album'];
-  const newYear = year || newAlbum['Recorded'];
-  const newRating = rating || randomIndex(5, 3);
+// const createNewAlbum = ({ art, title, artist, year, rating }) => {
+//   // for testing only
+//   const newId = Date.now().toString();
+//   const randomIndex = (max, min) =>
+//     Math.floor(Math.random() * (max + 1 - min) + min);
+//   const newAlbum = sampleData[randomIndex(sampleData.length, 0)];
+//   const newArtist = artist || 'Sun Ra';
+//   const newArt =
+//     art ||
+//     'https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg';
+//   const newTitle = title || newAlbum['Album'];
+//   const newYear = year || newAlbum['Recorded'];
+//   const newRating = rating || randomIndex(5, 3);
 
-  return {
-    id: newId,
-    title: newTitle,
-    artist: newArtist,
-    art: newArt,
-    year: newYear,
-    rating: newRating
-  };
-};
+//   return {
+//     id: newId,
+//     title: newTitle,
+//     artist: newArtist,
+//     art: newArt,
+//     year: newYear,
+//     rating: newRating
+//   };
+// };
 
 class AddForm extends React.Component {
   componentDidMount() {
@@ -47,7 +47,10 @@ class AddForm extends React.Component {
     addForm: {
       art: {
         elementConfig: {
-          type: 'imageUpload'
+          type: 'imageUpload',
+          rules: {
+            required: true
+          }
         },
         value: '',
         valid: false,
@@ -57,7 +60,10 @@ class AddForm extends React.Component {
         elementType: 'input',
         elementConfig: {
           type: 'text',
-          placeholder: 'Album Title'
+          placeholder: 'Album Title',
+          rules: {
+            required: true
+          }
         },
         value: '',
         valid: false,
@@ -66,7 +72,10 @@ class AddForm extends React.Component {
       artist: {
         elementConfig: {
           type: 'text',
-          placeholder: 'Artist'
+          placeholder: 'Artist',
+          rules: {
+            required: true
+          }
         },
         value: '',
         valid: false,
@@ -76,7 +85,10 @@ class AddForm extends React.Component {
       year: {
         elementConfig: {
           type: 'text',
-          placeholder: 'Year Released'
+          placeholder: 'Year Released',
+          rules: {
+            required: true
+          }
         },
         value: '',
         valid: false,
@@ -84,7 +96,10 @@ class AddForm extends React.Component {
       },
       rating: {
         elementConfig: {
-          type: 'starRating'
+          type: 'starRating',
+          rules: {
+            required: true
+          }
         },
         value: 0,
         valid: false,
@@ -92,17 +107,15 @@ class AddForm extends React.Component {
       }
     },
     formIsValid: false,
-    existing: null
+    existing: null,
+    loaded: false
   };
-
-  // checkValidity = (field, value, rule) => {
-
-  // }
 
   formSetter = albumObject => {
     const updatedForm = Object.keys(this.state.addForm).reduce(
       (collection, current) => {
         collection[current].value = albumObject[current];
+        collection[current].valid = true; // assume data from the db is already validated
         return collection;
       },
       { ...this.state.addForm }
@@ -111,8 +124,15 @@ class AddForm extends React.Component {
     this.setState({
       // ...this.state,
       addForm: updatedForm,
-      formIsValid: true
+      formIsValid: true,
+      loaded: true
     });
+  };
+
+  checkValidity = (field, value) => {
+    if (this.state.addForm[field].elementConfig.rules.required) {
+      return value !== '';
+    }
   };
 
   inputChangedHandler = (event, inputIdentifier, payload) => {
@@ -130,11 +150,15 @@ class AddForm extends React.Component {
       updatedFormElement.value = event.target.value;
     }
     updatedFormElement.touched = true;
-    updatedFormElement.valid = true; // customize this with a helper function
+    updatedFormElement.valid = this.checkValidity(
+      inputIdentifier,
+      updatedFormElement.value
+    );
     updatedForm[inputIdentifier] = updatedFormElement;
 
-    let formIsValid = true;
-    // check if form is valid
+    let formIsValid = Object.keys(updatedForm)
+      .map(element => updatedForm[element].valid)
+      .every(item => item !== false);
 
     this.setState({
       addForm: updatedForm,
@@ -152,8 +176,8 @@ class AddForm extends React.Component {
       {}
     );
     if (!this.state.existing) {
-      const newAlbum = createNewAlbum(updatedValues);
-      this.props.onAddAlbum(newAlbum);
+      // const newAlbum = createNewAlbum(updatedValues); // for testing only
+      this.props.onAddAlbum(updatedValues);
     } else {
       this.props.onUpdateAlbum({ ...updatedValues, id: this.state.existing });
     }
@@ -170,11 +194,12 @@ class AddForm extends React.Component {
 
     return (
       <div>
-        {(!this.state.existing || this.state.formIsValid) && (
+        {(!this.state.existing || this.state.loaded) && (
           <Form
             onSubmitForm={this.onSubmitForm}
             formElementsArray={formElementsArray}
             inputChangedHandler={this.inputChangedHandler}
+            formIsValid={this.state.formIsValid}
           />
         )}
 

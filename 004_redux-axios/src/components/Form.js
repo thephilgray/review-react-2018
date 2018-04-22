@@ -38,7 +38,9 @@ const Form = props => {
         );
       })}
 
-      <NewFormSubmitButton type="submit">Save</NewFormSubmitButton>
+      <NewFormSubmitButton type="submit" disabled={!props.formIsValid}>
+        Save
+      </NewFormSubmitButton>
     </NewForm>
   );
 };
