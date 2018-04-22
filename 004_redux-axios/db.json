@@ -22,7 +22,7 @@
       "artist": "Sun Ra",
       "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
       "year": "1966",
-      "rating": 5
+      "rating": 3
     },
     {
       "id": "1524174002479",
@@ -46,7 +46,7 @@
       "artist": "Sun Ra",
       "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
       "year": "1958-59",
-      "rating": 5
+      "rating": 4
     },
     {
       "id": "1524215560229",
@@ -57,11 +57,19 @@
       "rating": 4
     },
     {
-      "id": "1524215799272",
-      "title": "Coffee",
-      "artist": "Someone on Unsplash",
-      "art": "https://storage.googleapis.com/fb-cloud-functions-e49d0.appspot.com/tanja-heffner-509140-unsplash.jpg?GoogleAccessId=firebase-adminsdk-du6a0@fb-cloud-functions-e49d0.iam.gserviceaccount.com&Expires=1742169600&Signature=iH24crpzMp2mxT0KPlL%2FjfnAlhAz331tYCdxwh1pnvfids3LR%2FvA2GP%2B5eKWSzpngEdbl6kvdeN3UF2LWdSiAAd9zhJtEBQSNMAxcWE2WL4WQR5fLn3tVHXGJLbr07nwJXBZNe8%2Bn1wRZq%2B%2BGcgpWScs0iVBYT3uEgQpsBjzMQDrC3qm3xNeUXfdQCACzNxqZrZZZQlZN5AA5BZ6fDkUWG2CzhXfeH%2Fj7Z8KKZEzHTljzoAnkA15klUMOYRu9RBm3hEx4IuHvU0idIGQYDoBuLc91B0H9zEnE0vJ9RIBiq37pQMtxUSYFpaP1YQ%2Bp9mawBO5XXDypQ2TcaSuB3PKkA%3D%3D",
-      "year": "2015",
+      "id": "1524330665038",
+      "title": "A Fireside Chat with Lucifer",
+      "artist": "Sun Ra",
+      "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
+      "year": "1982",
+      "rating": 3
+    },
+    {
+      "id": "1524362030268",
+      "title": "Friendly Love",
+      "artist": "Sun Ra",
+      "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
+      "year": "1973",
       "rating": 5
     }
   ]

@@ -1,27 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import styled from 'styled-components';
 
-import { addAlbum } from '../actions/';
-import FormInput from '../components/FormInput';
-
+import { addAlbum, updateAlbum } from '../actions/';
 import sampleData from '../sample_discography.json';
-
-const NewForm = styled.form`
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto;
-`;
-
-const NewFormSubmitButton = styled.button`
-  width: 100%;
-  padding: 1em 0.25em;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  &:not([disabled]) {
-    cursor: pointer;
-  }
-`;
+import axios from '../lib/albums';
+import Form from '../components/Form';
 
 const createNewAlbum = ({ art, title, artist, year, rating }) => {
   // for testing only
@@ -48,6 +32,17 @@ const createNewAlbum = ({ art, title, artist, year, rating }) => {
 };
 
 class AddForm extends React.Component {
+  componentDidMount() {
+    if (this.props.match.path === '/:id/edit') {
+      this.setState({ existing: this.props.match.params.id });
+      axios.get(`/${this.props.match.params.id}`).then(response => {
+        // set activeAlbum in redux store here
+
+        this.formSetter(response.data);
+      });
+    }
+  }
+
   state = {
     addForm: {
       art: {
@@ -96,8 +91,29 @@ class AddForm extends React.Component {
         touched: false
       }
     },
-    formIsValid: true,
-    submitted: false
+    formIsValid: false,
+    submitted: false,
+    existing: null
+  };
+
+  // checkValidity = (field, value, rule) => {
+
+  // }
+
+  formSetter = albumObject => {
+    const updatedForm = Object.keys(this.state.addForm).reduce(
+      (collection, current) => {
+        collection[current].value = albumObject[current];
+        return collection;
+      },
+      { ...this.state.addForm }
+    );
+
+    this.setState({
+      // ...this.state,
+      addForm: updatedForm,
+      formIsValid: true
+    });
   };
 
   inputChangedHandler = (event, inputIdentifier, payload) => {
@@ -115,6 +131,7 @@ class AddForm extends React.Component {
       updatedFormElement.value = event.target.value;
     }
     updatedFormElement.touched = true;
+    updatedFormElement.valid = true; // customize this with a helper function
     updatedForm[inputIdentifier] = updatedFormElement;
 
     let formIsValid = true;
@@ -135,10 +152,15 @@ class AddForm extends React.Component {
       },
       {}
     );
-    const newAlbum = createNewAlbum(updatedValues);
-    this.props.onAddAlbum(newAlbum);
+    if (!this.state.existing) {
+      const newAlbum = createNewAlbum(updatedValues);
+      this.props.onAddAlbum(newAlbum);
+    } else {
+      this.props.onUpdateAlbum({ ...updatedValues, id: this.state.existing });
+    }
     this.setState({ submitted: true });
   };
+
   render() {
     const formElementsArray = [];
     for (let key in this.state.addForm) {
@@ -147,36 +169,34 @@ class AddForm extends React.Component {
         config: this.state.addForm[key]
       });
     }
-    return (
-      <NewForm onSubmit={this.onSubmitForm}>
-        {formElementsArray.map(formElement => {
-          return (
-            <FormInput
-              key={formElement.id}
-              name={formElement.id}
-              elementConfig={formElement.config.elementConfig}
-              value={formElement.config.value}
-              validation={formElement.config.validation}
-              valid={formElement.config.valid}
-              touched={formElement.config.touched}
-              changed={(event, payload) =>
-                this.inputChangedHandler(event, formElement.id, payload)
-              }
-            />
-          );
-        })}
 
-        <NewFormSubmitButton type="submit">Save</NewFormSubmitButton>
+    return (
+      <div>
+        {(!this.state.existing || this.state.formIsValid) && (
+          <Form
+            onSubmitForm={this.onSubmitForm}
+            formElementsArray={formElementsArray}
+            inputChangedHandler={this.inputChangedHandler}
+          />
+        )}
+
         {this.state.submitted ? <Redirect to="/" /> : null}
-      </NewForm>
+      </div>
     );
   }
 }
 
-const mapDispatchToActions = dispatch => {
+const mapStateToProps = state => {
   return {
-    onAddAlbum: newAlbum => dispatch(addAlbum(newAlbum))
+    selected: state.albums.selected
   };
 };
 
-export default connect(null, mapDispatchToActions)(AddForm);
+const mapDispatchToActions = dispatch => {
+  return {
+    onAddAlbum: newAlbum => dispatch(addAlbum(newAlbum)),
+    onUpdateAlbum: albumToUpdate => dispatch(updateAlbum(albumToUpdate))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToActions)(AddForm);

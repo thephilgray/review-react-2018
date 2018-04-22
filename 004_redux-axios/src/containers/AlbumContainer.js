@@ -19,7 +19,8 @@ class AlbumContainer extends React.Component {
   render() {
     return (
       <CardGridWrapper>
-        <CardGrid cards={this.props.albums} />
+        {this.props.albums && <CardGrid cards={this.props.albums} />}
+
         <AddCard />
       </CardGridWrapper>
     );

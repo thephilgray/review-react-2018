@@ -72,13 +72,18 @@ const ImageUploadImage = styled.img`
 `;
 
 class ImageUpload extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      art: props.art,
+      upload: null,
+      progress: 0,
+      show: true
+    };
+  }
+
   fileInput = null;
-  state = {
-    art: '',
-    upload: null,
-    progress: 0,
-    show: true
-  };
+
   onFileSelected = async e => {
     console.log(e.target.files[0]);
     await this.setState({ upload: e.target.files[0] });

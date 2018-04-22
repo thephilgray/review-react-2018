@@ -39,6 +39,7 @@ class StarRating extends React.Component {
       return { stars: this.updatedStars(this.props.rating - 1, stars) };
     });
   }
+
   updatedStars = (rating, prevStars) =>
     prevStars.map((star, index) => index <= rating);
 

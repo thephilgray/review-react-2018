@@ -9,6 +9,7 @@ export default () => (
   <Switch>
     <Route exact path="/" component={AlbumContainer} />
     <Route exact path="/add" component={AddForm} />
+    <Route path="/:id/edit" component={AddForm} />
     <Route component={PageNotFound} />
   </Switch>
 );

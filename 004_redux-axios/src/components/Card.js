@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 
+import { Link } from 'react-router-dom';
 import { deleteAlbum } from '../actions';
 
 import Icon from './Icon';
@@ -170,9 +171,11 @@ class Card extends React.Component {
             <StarRating rating={card.rating} />
           </CardDetails>
           <CardControls>
-            <CardButton aria-label="Edit this album">
-              <Icon glyph={pencil} fillColor="#000" />
-            </CardButton>
+            <Link to={`/${card.id}/edit`}>
+              <CardButton aria-label="Edit this album">
+                <Icon glyph={pencil} fillColor="#000" />
+              </CardButton>
+            </Link>
             <CardButton
               aria-label="Delete this album"
               onClick={() => this.handleAlbumDelete(card.id)}
