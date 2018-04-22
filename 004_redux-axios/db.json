@@ -14,7 +14,7 @@
       "artist": "Sun Ra",
       "art": "https://upload.wikimedia.org/wikipedia/en/2/22/Lanquidity.jpg",
       "year": "1978",
-      "rating": 4
+      "rating": 5
     },
     {
       "id": "1524151599675",
@@ -22,15 +22,7 @@
       "artist": "Sun Ra",
       "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
       "year": "1966",
-      "rating": 3
-    },
-    {
-      "id": "1524174002479",
-      "title": "Test",
-      "artist": "Sun Ra 2",
-      "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
-      "year": "1950",
-      "rating": 4
+      "rating": 5
     },
     {
       "id": "1524215181333",
@@ -38,7 +30,7 @@
       "artist": "Sun Ra",
       "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
       "year": "1959",
-      "rating": 4
+      "rating": 2
     },
     {
       "id": "1524215311667",
@@ -49,27 +41,19 @@
       "rating": 4
     },
     {
-      "id": "1524215560229",
-      "title": "Astro Black",
-      "artist": "Sun Ra",
-      "art": "https://storage.googleapis.com/fb-cloud-functions-e49d0.appspot.com/518036.jpg?GoogleAccessId=firebase-adminsdk-du6a0@fb-cloud-functions-e49d0.iam.gserviceaccount.com&Expires=1742169600&Signature=Ssu922dx16c0KCBv6e1OV7Uw%2F8HbFHui1eTBr807xPj%2FxPatTY0D1Xhy83GrdoaGn1552EqC2c82Dje4aMtzyObtC%2BMslf3Qpt6S%2Br1GEbKKdutG3%2B0Lke7XpNnnPLOfmzJM7Nm8eJXWCal5Eq8MVK8uGgJWmg9DY9wyXcE88rq2nucuvXAdJ7Ke619xJ5AILQnJQdRu6qzrg0hJpz%2FIu8fgpNRS5FFt2T3ZReSp2G50b61YW9V%2Be15LreeEddZ7zNUeUYOltgl%2BLssIcjbAEkbyJIsxpb5DtFi5LOHRLlH0n4ggMtjOr6ZZ03bpsK7nT15JNJ%2B1XfhWUaRqvoLHSA%3D%3D",
-      "year": "1972",
-      "rating": 4
-    },
-    {
       "id": "1524330665038",
       "title": "A Fireside Chat with Lucifer",
       "artist": "Sun Ra",
       "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
       "year": "1982",
-      "rating": 3
+      "rating": 2
     },
     {
-      "id": "1524362030268",
-      "title": "Friendly Love",
+      "id": "1524415268959",
+      "title": "Blue Delight",
       "artist": "Sun Ra",
       "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
-      "year": "1973",
+      "year": "1989",
       "rating": 5
     }
   ]

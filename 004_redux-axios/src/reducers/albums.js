@@ -10,7 +10,8 @@ import {
 
 const initialState = {
   albums: [],
-  activeAlbum: { album: {}, loading: false, error: null }
+  activeAlbum: { album: {}, loading: false, error: null },
+  submitted: false
 };
 
 export default (state = initialState, action) => {
@@ -42,11 +43,13 @@ export default (state = initialState, action) => {
       const albumsWithNewAlbum = [...state.albums];
       albumsWithNewAlbum.push(action.newAlbum);
       console.log(`${action.newAlbum.id} was added to ${albumsWithNewAlbum}`);
-      return { ...state, albums: albumsWithNewAlbum };
+      return { ...state, albums: albumsWithNewAlbum, submitted: true };
+
     case FETCH_ALBUMS_SUCCESS:
       return {
         ...state,
-        albums: action.albums
+        albums: [...action.albums],
+        submitted: false
       };
     case DELETE_ALBUM_SUCCESS:
       console.log(`${action.deletedAlbumId} was deleted`);
@@ -68,7 +71,8 @@ export default (state = initialState, action) => {
 
       return {
         ...state,
-        albums: [...updateAlbumArray]
+        albums: [...updateAlbumArray],
+        submitted: true
       };
 
     default:

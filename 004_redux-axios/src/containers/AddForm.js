@@ -92,7 +92,6 @@ class AddForm extends React.Component {
       }
     },
     formIsValid: false,
-    submitted: false,
     existing: null
   };
 
@@ -158,7 +157,6 @@ class AddForm extends React.Component {
     } else {
       this.props.onUpdateAlbum({ ...updatedValues, id: this.state.existing });
     }
-    this.setState({ submitted: true });
   };
 
   render() {
@@ -180,7 +178,7 @@ class AddForm extends React.Component {
           />
         )}
 
-        {this.state.submitted ? <Redirect to="/" /> : null}
+        {this.props.submitted ? <Redirect to="/" /> : null}
       </div>
     );
   }
@@ -188,7 +186,8 @@ class AddForm extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    selected: state.albums.selected
+    selected: state.albums.selected,
+    submitted: state.albums.submitted
   };
 };
 
