@@ -328,9 +328,7 @@ app.get('/api/albums', (req, res) => res.send(data));
 const port = process.env.PORT || 8080;
 if (process.env.NODE_ENV === 'test') {
   mongoose.connect(databaseUrl).then(() => {
-    app.listen(7000, () =>
-      console.log(`Listening on http://localhost:${7000}`)
-    );
+    app.listen(7000, () => console.log('Listening on http://localhost:7000'));
   });
 } else {
   mongoose.connect(databaseUrl).then(() => {
