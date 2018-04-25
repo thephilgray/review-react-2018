@@ -2,10 +2,9 @@ const router = require('express').Router();
 
 const Album = require('../models');
 
-router.get('/', (req, res) => {
-  res.json({
-    message: 'root'
-  });
+router.get('/', async (req, res) => {
+  const albums = await Album.find({}).exec();
+  res.json(albums);
 });
 
 router.post('/add', async (req, res) => {

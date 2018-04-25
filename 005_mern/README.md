@@ -236,7 +236,7 @@ set -e
 
 tests_that_are_not_features="$(ls src/server/**/*.test.js | grep -v features)"
 
-NODE_ENV=test ./node_modules/.bin/mocha ${tests_that_are_not_features}
+NODE_ENV=test ./node_modules/.bin/mocha ${tests_that_are_not_features} --exit
 ```
 
 * Make it executable
@@ -432,4 +432,31 @@ const albumSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Album', albumSchema);
+```
+
+* Get all albums
+
+```js
+// src/server/routes/index.test.js
+
+// ...imports and other tests
+
+describe('GET `/`', () => {
+  it('should return a status of 200', async () => {
+    const response = await request(app).get('/');
+
+    assert.equal(response.status, 200);
+  });
+
+  it('should return an array of albums', async () => {
+    await request(app)
+      .post('/add')
+      .send(newAlbum);
+
+    const response = await request(app).get('/');
+
+    assert.include(JSON.stringify(response.body), newAlbum.title);
+    assert.equal(response.body.length, 1);
+  });
+});
 ```
