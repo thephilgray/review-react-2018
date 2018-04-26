@@ -1,5 +1,5 @@
 # MERN: Mongo Express React Node
-Album Collector App
+w/ album-collector app
 
 ## Express + React Setup
 There's incredible diversity in approaches to structuring a full-stack MERN application. The end results are the same, but it seems that no two are alike, and the Goldilocks principle applies. I spent the better part of a week reviewing boilerplates and tutorials. Each one was either a little outdated, or for my needs, either over-simplistic or too advanced. 
@@ -12,7 +12,7 @@ This first section comprises of my notes while following along with that tutoria
 
 We'll be building out this project structure:
 
-```md
+```txt
 ├── README.md
 ├── bin
 ├── index.html
@@ -510,7 +510,7 @@ I've had good experiences with `Storybook`, which lets you develop your componen
 
 I want my feature/integration testing pyramid to include a small suite of end-to-end tests backed by a more complete stack of granular Enzyme tests.
 
-Originally, I thought to use Webdriver.io, but after several daunting experiences struggling with the initial setup, I decided to finally try out `Cypress`, which has a wonderful [set of videos about testing a simple React app](https://docs.cypress.io/examples/examples/tutorials.html#Test-a-React-Todo-App).
+Originally, I thought to use Webdriver.io, but after several daunting experiences struggling with the initial setup, I decided to finally try out `Cypress`, which has a wonderful [set of videos about testing a simple React app](https://docs.cypress.io/examples/examples/tutorials.html#Test-a-React-Todo-App), and can be used in a similar Behavior-Driven approach  that I used to test individual components with `Storybook` but with the addition of robust automation features that make it ideal for integration testing.
 
 ### Setup Cypress
 
@@ -539,7 +539,7 @@ yarn cypress
 
 Cypress will create some `cypress.json` config file at the project root as well as a `cypress` directory which includes the following directories:
 
-```md
+```txt
 ./cypress
 
 ├── fixtures
@@ -553,7 +553,7 @@ Cypress will create some `cypress.json` config file at the project root as well 
 
 Our project structure now resembles this:
 
-```md
+```txt
 ├── README.md
 ├── bin
 │   └── mocha-test
@@ -593,7 +593,381 @@ Our project structure now resembles this:
 
 ```
 
-### Write First Feature Test
+### Write First Feature Tests with Cypress
+* Add the devServer url as the `baseUrl` to `cypress.json`
 
+```js
+// ./cypress.json
+
+{
+    "baseUrl": "http://localhost:3000"
+}
+
+```
+
+
+* Touch `cypress/integration/app-init.spec.js`
+
+```js
+// cypress/integration/app-init.spec.js
+
+describe('App intitialization', () => {
+  it.only('should contain the `CardGrid` component', () => {
+    cy.visit('/')
+    .get('.CardGrid');
+  });
+});
+
+```
+
+* Start the `Webpack` dev server with `yarn dev` and then `Cypress` with `yarn cypress` and click `Run All Tests`
+* There is no element with the class `.CardGrid`; the test should fail
+* Touch `src/client/components/CardGrid.js`
+
+```js
+// src/client/components/CardGrid.js
+
+import React from 'react';
+
+const CardGrid = () => (
+  <div className="CardGrid">
+    <p>Card</p>
+  </div>
+);
+
+export default CardGrid;
+```
+* Import and use this component inside the `App` component, removing the old code that fetched data directly from the server
+
+```js
+// src/client/App.js
+
+import React from 'react';
+
+import CardGrid from './components/CardGrid';
+
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return (
+      <div>
+        <CardGrid />
+      </div>
+    );
+  }
+}
+
+```
+The first test should now be passing. But we're not done with it. We really want to make sure that the component renders the data it receives as props. These next steps will closely follow the video tutorial.
+
+* Touch `cypress/fixtures/albums.json`
+* Copy the sample data array into this file
+
+```js
+[
+  {
+    "id": "1521567322",
+    "title": "Space is the Place",
+    "artist": "Sun Ra",
+    "art": "https://upload.wikimedia.org/wikipedia/en/6/6c/Space_Is_The_Place_album_cover.jpg",
+    "year": "1973",
+    "rating": 5
+  },
+  {
+    "id": "1521567405",
+    "title": "Lanquidity",
+    "artist": "Sun Ra",
+    "art": "https://upload.wikimedia.org/wikipedia/en/2/22/Lanquidity.jpg",
+    "year": "1978",
+    "rating": 5
+  },
+  // ... other albums
+]
+
+```
+
+* Rewrite the test in `app-init.spec.js`
+
+```js
+// cypress/itegration/app-init.spec.js
+
+describe('App intitialization', () => {
+  it.only('Loads todos on page load', () => {
+    cy.server();
+    cy.route('GET', '/api/albums', 'fixture:albums');
+    cy.visit('/');
+
+    cy.get('.CardGrid .Card').should('have.length', 7);
+  });
+});
+
+```
+
+* Touch `src/client/lib/service.js`
+
+```js
+import axios from 'axios';
+
+export const loadAlbums = () => axios.get('/api/albums'); //eslint-disable-line
+
+```
+
+
+* Call `loadAlbums()` in `src/client/App.js`
+
+```js
+// src/client/App.js
+
+/** 
+* Essentially the same as earlier,
+* but the Axios request was moved into a separate file.
+**/
+
+import React from 'react';
+import { loadAlbums } from './lib/service';
+import CardGrid from './components/CardGrid';
+
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { albums: null };
+  }
+
+  componentDidMount() {
+    loadAlbums().then(({ data }) => {
+      this.setState({ albums: data.albums });
+    });
+  }
+  render() {
+    return (
+      <div>
+        <CardGrid albums={this.state.albums} />
+      </div>
+    );
+  }
+}
+
+```
+
+* Map over a div with the class `.Card` inside the `CardGrid` component
+
+```js
+import React from 'react';
+import PropTypes from 'prop-types';
+
+const CardGrid = props => (
+  <div className="CardGrid">
+    {props.albums !== null
+      ? props.albums.map(album => (
+        <div className="Card" key="album.id">
+          <h2>{album.title}</h2>
+        </div>
+        ))
+      : null}
+  </div>
+);
+
+CardGrid.propTypes = {
+  albums: PropTypes.arrayOf(PropTypes.object)
+};
+
+CardGrid.defaultProps = {
+  albums: [{}]
+};
+
+export default CardGrid;
+
+```
+
+Now the test is passing, and even though our server is already prepared to handle this api route, we can test the component in isolation by stubbing the request and using fixture data.
+
+One thing I'm already thinking about is that it's not going to be practical using class selectors, as I plan to build out my components with styled-components.
+
+A quick search leads me to this recommendation:
+
+> "Best Practice: Use data-* attributes to provide context to your selectors and insulate them from CSS or JS changes."
+> 
+* [https://github.com/cypress-io/cypress/issues/1212](https://github.com/cypress-io/cypress/issues/1212)
+* [https://docs.cypress.io/guides/references/best-practices.html#Selecting-Elements](https://docs.cypress.io/guides/references/best-practices.html#Selecting-Elements)
+
+So, let's start to use styled-components and change our tests to use the `data-cy` selector for DOM traversal.
+
+* Update the test in `app-init.spec.js` to use data attribute selectors. Also, assert that 
+
+```js
+// cypress/integration/app-init.spec.js
+
+describe('App intitialization', () => {
+  it.only('Loads todos on page load', () => {
+    cy.server();
+    cy.route('GET', '/api/albums', 'fixture:albums');
+    cy.visit('/');
+
+    cy.get('[data-cy=Card]').should('have.length', 7);
+  });
+});
+
+```
+
+* Install `styled-components`
+
+```bash
+yarn add styled-components
+```
+
+* Touch `src/client/components/Card.js`
+
+```js
+// src/client/components/Card.js
+
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import styled from 'styled-components';
+
+const CardWrapper = styled.div`
+  position: relative;
+  width: 310px;
+  padding: 1em 0.5em;
+  box-shadow: 1px 4px 2px 1px #aaa;
+  margin: 0.5em;
+  background: #eee;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    box-shadow: 1px 4px 2px 2px #aaa;
+  }
+`;
+
+const CardImage = styled.img`
+  width: 100%;
+  height: auto;
+`;
+
+const CardImageWrapper = styled.div`
+  position: relative;
+  height: 294px;
+  width: 294px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+`;
+
+const CardBody = styled.div`
+  display: flex;
+  background: #ddd;
+  padding: 0.5em;
+  width: 100%;
+`;
+
+const CardDetails = styled.div`
+  flex: 60%;
+
+  h3 {
+    margin: 0;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  & > h3 + p {
+    margin-top: 0;
+    word-break: break-all;
+  }
+`;
+
+const CardControls = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  width: 2em;
+  justify-content: center;
+  align-items: center;
+`;
+
+const CardButton = styled.button`
+  padding: 0.25em;
+  background: transparent;
+  border-color: transparent;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+class Card extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  render() {
+    return (
+      <CardWrapper data-cy="Card">
+        <CardImageWrapper>
+          <CardImage src={this.props.art} />
+        </CardImageWrapper>
+        <CardBody>
+          <CardDetails>
+            <h3>{this.props.title}</h3>
+            <p>by {this.props.artist}</p>
+            <p>{this.props.year}</p>
+          </CardDetails>
+          <CardControls>
+            <CardButton aria-label="Edit this album">Edit</CardButton>
+            <CardButton aria-label="Delete this album">Delete</CardButton>
+          </CardControls>
+        </CardBody>
+      </CardWrapper>
+    );
+  }
+}
+
+Card.propTypes = {
+  artist: PropTypes.string,
+  art: PropTypes.string,
+  title: PropTypes.string,
+  year: PropTypes.string
+};
+Card.defaultProps = {
+  art: 'http://via.placeholder.com/300x300',
+  title: 'Unknown title',
+  artist: 'Unknown artist',
+  year: 'Unknown year'
+};
+export default Card;
+
+```
+
+* Use the `Card` component within the `CardGrid` component, passing each `album` object property down as a prop to `Card`
+
+```js
+// src/client/components/CardGrid.js
+
+// ...imports
+
+import Card from './Card';
+
+const CardGrid = props => (
+  <div data-cy="CardGrid">
+    {props.albums !== null ? props.albums.map(album => <Card {...album} key={album.id}/>) : null}
+  </div>
+);
+
+
+```
+
+* Run the test again or if `Cypress` is still open, refresh it. It should now pass.
+
+We've just barely scratched the surface of what we can do with Cypress. More to come. 
 
 Source: [https://docs.cypress.io/examples/examples/tutorials.html#Test-a-React-Todo-App](https://docs.cypress.io/examples/examples/tutorials.html#Test-a-React-Todo-App)
+
+### Setup Jest and Enzyme
