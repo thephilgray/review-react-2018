@@ -811,6 +811,23 @@ describe('App intitialization', () => {
 
 ```
 
+* Add `src/client/index.css` to apply global `box-sizing: border-box`.
+
+```css
+/*  src/client/index.css */
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+```
+
 * Install `styled-components`
 
 ```bash
@@ -971,3 +988,4 @@ We've just barely scratched the surface of what we can do with Cypress. More to 
 Source: [https://docs.cypress.io/examples/examples/tutorials.html#Test-a-React-Todo-App](https://docs.cypress.io/examples/examples/tutorials.html#Test-a-React-Todo-App)
 
 ### Setup Jest and Enzyme
+...
