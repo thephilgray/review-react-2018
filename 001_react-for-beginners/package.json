@@ -10,15 +10,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "watch":
-      "concurrently --names \"webpack, stylus\" --prefix name \"yarn start\" \"yarn styles:watch\"",
+    "watch": "concurrently --names \"webpack, stylus\" --prefix name \"yarn start\" \"yarn styles:watch\"",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "styles":
-      "stylus -u autoprefixer-stylus ./src/css/style.styl -o ./src/css/style.css",
-    "styles:watch":
-      "stylus -u autoprefixer-stylus -w ./src/css/style.styl -o ./src/css/style.css"
+    "styles": "stylus -u autoprefixer-stylus ./src/css/style.styl -o ./src/css/style.css",
+    "styles:watch": "stylus -u autoprefixer-stylus -w ./src/css/style.styl -o ./src/css/style.css"
   },
   "devDependencies": {
     "autoprefixer-stylus": "^0.14.0",
@@ -32,7 +29,12 @@
     "stylus": "^0.54.5"
   },
   "jest": {
-    "snapshotSerializers": ["enzyme-to-json/serializer"],
-    "collectCoverageFrom": ["src/**/*.js", "!src/*.js"]
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/*.js"
+    ]
   }
 }
