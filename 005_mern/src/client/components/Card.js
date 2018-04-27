@@ -93,7 +93,6 @@ class Card extends React.Component {
         <CardBody>
           <CardDetails>
             <h3>{this.props.title}</h3>
-            <p>by {this.props.artist}</p>
             <p>{this.props.year}</p>
           </CardDetails>
           <CardControls>

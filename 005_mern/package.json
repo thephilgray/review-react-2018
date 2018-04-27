@@ -9,17 +9,19 @@
     "dev": "concurrently --kill-others --allow-restart \"npm run server\" \"npm run client \"",
     "test:server": "bin/mocha-test",
     "cypress": "cypress open",
-    "test": "jest",
+    "test": "jest --watch",
     "test:unit": "NODE_ENV=test mocha 'src/server/**/*.test.js' --exit"
   },
   "jest": {
-    "testPathIgnorePatterns": ["/node_modules/", "/cypress/"]
+    "testPathIgnorePatterns": ["/node_modules/", "/cypress/"],
+    "setupTestFrameworkScriptFile": "./setupTests.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
     "dotenv": "^5.0.1",
+    "enzyme-adapter-react-16": "^1.1.1",
     "express": "^4.16.3",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "babel-jest": "^22.4.3",
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
@@ -37,6 +40,8 @@
     "concurrently": "^3.5.1",
     "css-loader": "^0.28.11",
     "cypress": "^2.1.0",
+    "enzyme": "^3.3.0",
+    "enzyme-to-json": "^3.3.3",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.11.0",

@@ -153,7 +153,7 @@ app.listen(port, () => console.log(`Listening on http://localhost:${port}`));
 
 ```bash
 yarn add express react react-dom axios
-yarn add -D babel-core babel-loader babel-preset-env babel-preset-react body-parser clean-webpack-plugin concurrently css-loader eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-jest eslint-plugin-jsx-a11y eslint-plugin-react html-webpack-plugin jest morgan nodemon style-loader webpack webpack-cli webpack-dev-server
+yarn add -D babel-core babel-jest babel-loader babel-preset-env babel-preset-react body-parser clean-webpack-plugin concurrently css-loader eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-jest eslint-plugin-jsx-a11y eslint-plugin-react html-webpack-plugin jest morgan nodemon style-loader webpack webpack-cli webpack-dev-server
 ```
 
 * Create `src/client` and touch `index.js`
@@ -217,6 +217,9 @@ export default class App extends React.Component {
 ```
 
 Source: [https://hackernoon.com/full-stack-web-application-using-react-node-js-express-and-webpack-97dbd5b9d708](https://hackernoon.com/full-stack-web-application-using-react-node-js-express-and-webpack-97dbd5b9d708)
+
+TODO: Review [https://www.robinwieruch.de/minimal-react-webpack-babel-setup/](https://www.robinwieruch.de/minimal-react-webpack-babel-setup/)
+
 ## Connect to MongoDB
 
 The notes in these next three sections are primarily influenced by the projects I worked on in the [Codecademy TDD Intensive course](https://www.codecademy.com/pro/intensive/test-driven-development).
@@ -527,7 +530,7 @@ yarn add -D cypress
   "scripts": {
   // ...other scripts
     "cypress": "cypress open",
-    "test": "jest"
+    "test": "jest --watch"
   },
   "jest": {
     "testPathIgnorePatterns": ["/node_modules/", "/cypress/"]
@@ -991,4 +994,58 @@ Source: [https://docs.cypress.io/examples/examples/tutorials.html#Test-a-React-T
 
 ### Setup Enzyme
 
+* Install `enzyme` and `enzyme adapter`
 
+```bash
+yarn add --D enzyme enzyme-adapter-react-16 enzyme-to-json
+```
+
+* Touch `setupTests.js`
+
+```js
+// setupTests.js
+
+import { configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+
+configure({ adapter: new Adapter() });
+```
+
+
+* Add `setupTestFrameworkScriptFile` path to `jest` config in `package.json`
+
+```js
+// package.json
+
+  "jest": {
+  //...other config
+    "setupTestFrameworkScriptFile": "./setupTests.js"
+  },
+```
+	
+* Touch `src/client/__tests__/Card.test.js`
+
+```js
+// src/client/__tests__/Card.test.js
+
+import React from 'react';
+import { shallow } from 'enzyme';
+
+import Card from '../components/Card';
+
+describe('Card', () => {
+  it('renders', () => {
+    const wrapper = shallow(<Card />);
+    expect(wrapper).toMatchSnapshot();
+  });
+  
+  it('should render a card title by default', () => {
+    const wrapper = shallow(<Card />);
+    expect(wrapper.find('h3').text()).toBe('Unknown title');
+  });
+});
+
+```
+
+
+TODO: review [https://www.robinwieruch.de/react-testing-tutorial/](https://www.robinwieruch.de/react-testing-tutorial/)
