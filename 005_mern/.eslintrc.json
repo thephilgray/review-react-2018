@@ -2,11 +2,14 @@
   "extends": ["airbnb"],
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "jest/globals": true
   },
   "rules": {
     "no-console": "off",
     "comma-dangle": "off",
+    "no-underscore-dangle": "off",
     "react/jsx-filename-extension": "off"
-  }
+  },
+  "plugins": ["jest"]
 }

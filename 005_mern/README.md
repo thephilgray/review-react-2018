@@ -14,7 +14,6 @@ We'll be building out this project structure:
 
 ```txt
 ├── README.md
-├── bin
 ├── index.html
 ├── nodemon.json
 ├── package.json
@@ -154,7 +153,7 @@ app.listen(port, () => console.log(`Listening on http://localhost:${port}`));
 
 ```bash
 yarn add express react react-dom axios
-yarn add -D babel-core babel-loader babel-preset-env babel-preset-react body-parser clean-webpack-plugin concurrently css-loader eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react html-webpack-plugin morgan nodemon style-loader webpack webpack-cli webpack-dev-server
+yarn add -D babel-core babel-loader babel-preset-env babel-preset-react body-parser clean-webpack-plugin concurrently css-loader eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-jest eslint-plugin-jsx-a11y eslint-plugin-react html-webpack-plugin jest morgan nodemon style-loader webpack webpack-cli webpack-dev-server
 ```
 
 * Create `src/client` and touch `index.js`
@@ -181,13 +180,13 @@ export default class App extends React.Component {
   componentDidMount() {
     axios
       .get('/api/albums')
-      .then(res => this.setState({ albums: res.data.albums }));
+      .then(res => this.setState({ albums: res.data}));
   }
   render() {
     return (
       <div>
         {this.state.albums !== null ? (
-          this.state.albums.map(album => <h2 key={album.id}>{album.title}</h2>)
+          this.state.albums.map(album => <h2 key={album._id}>{album.title}</h2>)
         ) : (
           <p>Loading....</p>
         )}
@@ -259,41 +258,36 @@ module.exports = {
 
 ## Server Testing
 
-* Install testing utilities
-
-```bash
-yarn add -D chai supertest mocha
-```
-
-* Touch `bin/mocha-test`
-
-```bash
-#/bin/sh
-
-set -e
-
-tests_that_are_not_features="$(ls src/server/**/*.test.js | grep -v features)"
-
-NODE_ENV=test ./node_modules/.bin/mocha ${tests_that_are_not_features} --exit
-```
-
-* Make it executable
-
-```bash
-chmod +x bin/mocha-test
-```
-
-* Add `test` script to `package.json`
+* Add `ESLint` support for `Jest`
 
 ```js
-// package.json
-  "scripts": {
-      // ...other scripts
-    "test:server": "bin/mocha-test"
+{
+  "extends": ["airbnb"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "jest/globals": true
   },
+  "rules": {
+    "no-console": "off",
+    "comma-dangle": "off",
+    "no-underscore-dangle": "off",
+    "react/jsx-filename-extension": "off"
+  },
+  "plugins": ["jest"]
+}
+
 ```
 
-Source: [https://www.codecademy.com/pro/intensive/test-driven-development](https://www.codecademy.com/pro/intensive/test-driven-development)
+* Add a `test` script to `package.json`
+
+```js
+  "scripts": {
+  //...other scripts
+    "test": "jest"
+  }
+```
+
 
 ### Write initial server tests and routes (confirm setup)
 
@@ -306,9 +300,9 @@ const request = require('supertest');
 
 const app = require('../../server/');
 
-describe('GET `/`', () => {
+describe('GET `/api`', () => {
   it('should return a JSON message and a status of 200', async () => {
-    const response = await request(app).get('/');
+    const response = await request(app).get('/api');
 
     assert.equal(response.status, 200);
     assert.include(response.body, {
@@ -341,7 +335,6 @@ const morgan = require('morgan');
 
 const { mongoose, databaseUrl } = require('./database');
 const routes = require('./routes');
-const data = require('./sampledata.json');
 
 const app = express();
 
@@ -362,8 +355,7 @@ app.use((req, res, next) => {
 });
 app.use(express.static('dist'));
 
-app.use('/', routes);
-app.get('/api/albums', (req, res) => res.send(data));
+app.use('/api/', routes);
 
 const port = process.env.PORT || 8080;
 if (process.env.NODE_ENV === 'test') {
@@ -389,41 +381,48 @@ module.exports = app;
 const { assert } = require('chai');
 const request = require('supertest');
 
-const app = require('../../server');
 const Album = require('../models/');
 const { mongoose, databaseUrl } = require('../database');
 
+const app = require('../../server/');
+
+const newAlbum = {
+  title: 'Space is the Place',
+  artist: 'Sun Ra',
+  art: 'https://upload.wikimedia.org/wikipedia/en/6/6c/Space_Is_The_Place_album_cover.jpg',
+  year: '1973',
+  rating: 5
+};
+
 // setup and teardown utilities
-beforeEach(async () => {
+async function connectDatabase() {
   await mongoose.connect(databaseUrl);
   await mongoose.connection.db.dropDatabase();
-});
+}
 
-afterEach(async () => {
+async function disconnectDatabase() {
+  await mongoose.connection.db.dropDatabase();
   await mongoose.disconnect();
-});
+}
 
-describe('Server path: `/add`', () => {
-  describe('POST', async () => {
-    it('should return a `201` status code when creating a new album', async () => {
-      const newAlbum = {
-        title: 'Space is the Place',
-        artist: 'Sun Ra',
-        art:
-          'https://upload.wikimedia.org/wikipedia/en/6/6c/Space_Is_The_Place_album_cover.jpg',
-        year: '1973',
-        rating: 5
-      };
+describe('/api/albums', async () => {
+  // setup and teardown utilities
+  beforeEach(connectDatabase);
+  afterEach(disconnectDatabase);
 
-      const response = await request(app)
-        .post('/add')
-        .type('json')
-        .send(newAlbum);
+  describe('Server path: `/api/albums/add`', () => {
+    describe('POST', () => {
+      it('should return a `201` status code when creating a new album', async () => {
+        const response = await request(app)
+          .post('/api/albums/add')
+          .send(newAlbum);
 
-      assert.equal(response.status, 201);
+        assert.equal(response.status, 201);
+      });
     });
   });
 });
+
 
 // src/server/routes/index.js
 
@@ -431,20 +430,20 @@ const router = require('express').Router();
 
 const Album = require('../models');
 
-router.get('/', (req, res) => {
-  res.json({
-    message: 'root'
-  });
+router.get('/albums', async (req, res) => {
+  const albums = await Album.find({}).exec();
+  res.json(albums);
 });
 
-router.post('/add', async (req, res) => {
+router.post('/albums/add', async (req, res) => {
   const newAlbum = await new Album(req.body);
-  newAlbum.save();
+  await newAlbum.save();
   const album = await Album.findOne(req.body);
   res.status(201).json(album);
 });
 
 module.exports = router;
+
 ```
 
 * Create the model
@@ -481,19 +480,19 @@ module.exports = mongoose.model('Album', albumSchema);
 
 // ...imports and other tests
 
-describe('GET `/`', () => {
+describe('GET `/api/albums`', () => {
   it('should return a status of 200', async () => {
-    const response = await request(app).get('/');
+    const response = await request(app).get('/api/albums');
 
     assert.equal(response.status, 200);
   });
 
   it('should return an array of albums', async () => {
     await request(app)
-      .post('/add')
+      .post('/api/albums/add')
       .send(newAlbum);
 
-    const response = await request(app).get('/');
+    const response = await request(app).get('/api/albums');
 
     assert.include(JSON.stringify(response.body), newAlbum.title);
     assert.equal(response.body.length, 1);
@@ -520,14 +519,18 @@ Originally, I thought to use Webdriver.io, but after several daunting experience
 yarn add -D cypress
 ```
 
-* Add cypress command to `package.json` scripts
+* Add cypress command to `package.json` scripts and add `jest` config to ignore `Cypress` tests
 
 ```js
 // package.json
 
   "scripts": {
   // ...other scripts
-    "cypress": "cypress open"
+    "cypress": "cypress open",
+    "test": "jest"
+  },
+  "jest": {
+    "testPathIgnorePatterns": ["/node_modules/", "/cypress/"]
   },
 ```
 
@@ -555,8 +558,6 @@ Our project structure now resembles this:
 
 ```txt
 ├── README.md
-├── bin
-│   └── mocha-test
 ├── cypress
 │   ├── fixtures
 │   ├── integration
@@ -668,7 +669,7 @@ The first test should now be passing. But we're not done with it. We really want
 ```js
 [
   {
-    "id": "1521567322",
+    "_id": "1521567322",
     "title": "Space is the Place",
     "artist": "Sun Ra",
     "art": "https://upload.wikimedia.org/wikipedia/en/6/6c/Space_Is_The_Place_album_cover.jpg",
@@ -676,7 +677,7 @@ The first test should now be passing. But we're not done with it. We really want
     "rating": 5
   },
   {
-    "id": "1521567405",
+    "_id": "1521567405",
     "title": "Lanquidity",
     "artist": "Sun Ra",
     "art": "https://upload.wikimedia.org/wikipedia/en/2/22/Lanquidity.jpg",
@@ -737,7 +738,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     loadAlbums().then(({ data }) => {
-      this.setState({ albums: data.albums });
+      this.setState({ albums: data });
     });
   }
   render() {
@@ -748,6 +749,7 @@ export default class App extends React.Component {
     );
   }
 }
+
 
 ```
 
@@ -761,7 +763,7 @@ const CardGrid = props => (
   <div className="CardGrid">
     {props.albums !== null
       ? props.albums.map(album => (
-        <div className="Card" key="album.id">
+        <div className="Card" key="album._id">
           <h2>{album.title}</h2>
         </div>
         ))
@@ -974,7 +976,7 @@ import Card from './Card';
 
 const CardGrid = props => (
   <div data-cy="CardGrid">
-    {props.albums !== null ? props.albums.map(album => <Card {...album} key={album.id}/>) : null}
+    {props.albums !== null ? props.albums.map(album => <Card {...album} key={album._id}/>) : null}
   </div>
 );
 
@@ -987,5 +989,6 @@ We've just barely scratched the surface of what we can do with Cypress. More to 
 
 Source: [https://docs.cypress.io/examples/examples/tutorials.html#Test-a-React-Todo-App](https://docs.cypress.io/examples/examples/tutorials.html#Test-a-React-Todo-App)
 
-### Setup Jest and Enzyme
-...
+### Setup Enzyme
+
+

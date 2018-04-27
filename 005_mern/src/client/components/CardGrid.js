@@ -5,7 +5,7 @@ import Card from './Card';
 
 const CardGrid = props => (
   <div data-cy="CardGrid">
-    {props.albums !== null ? props.albums.map(album => <Card {...album} key={album.id} />) : null}
+    {props.albums ? props.albums.map(album => <Card {...album} key={album._id} />) : null}
   </div>
 );
 
