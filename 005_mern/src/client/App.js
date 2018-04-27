@@ -10,7 +10,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     loadAlbums().then(({ data }) => {
-      this.setState({ albums: data.albums });
+      this.setState({ albums: data });
     });
   }
   render() {

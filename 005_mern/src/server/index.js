@@ -1,10 +1,10 @@
 const express = require('express');
+
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 
 const { mongoose, databaseUrl } = require('./database');
 const routes = require('./routes');
-const data = require('./sampledata.json');
 
 const app = express();
 
@@ -25,8 +25,7 @@ app.use((req, res, next) => {
 });
 app.use(express.static('dist'));
 
-app.use('/', routes);
-app.get('/api/albums', (req, res) => res.send(data));
+app.use('/api/', routes);
 
 const port = process.env.PORT || 8080;
 if (process.env.NODE_ENV === 'test') {

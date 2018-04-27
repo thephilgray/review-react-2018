@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+// require('dotenv').config(); // uncomment to use mlab db
 
 mongoose.Promise = global.Promise;
 

@@ -6,14 +6,20 @@
   "scripts": {
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
     "server": "nodemon src/server/index.js",
-    "dev": "concurrently \"npm run server\" \"npm run client \"",
+    "dev": "concurrently --kill-others --allow-restart \"npm run server\" \"npm run client \"",
     "test:server": "bin/mocha-test",
-    "cypress": "cypress open"
+    "cypress": "cypress open",
+    "test": "jest",
+    "test:unit": "NODE_ENV=test mocha 'src/server/**/*.test.js' --exit"
+  },
+  "jest": {
+    "testPathIgnorePatterns": ["/node_modules/", "/cypress/"]
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+    "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
@@ -34,9 +40,11 @@
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-jest": "^21.15.1",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
     "html-webpack-plugin": "^3.2.0",
+    "jest": "^22.4.3",
     "mocha": "^5.1.1",
     "mongoose": "^5.0.16",
     "morgan": "^1.9.0",

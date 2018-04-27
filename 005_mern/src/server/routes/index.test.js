@@ -1,13 +1,21 @@
 const { assert } = require('chai');
-const {
-  describe, beforeEach, afterEach, it
-} = require('mocha');
+
 const request = require('supertest');
 
 const Album = require('../models/');
 const { mongoose, databaseUrl } = require('../database');
 
 const app = require('../../server/');
+
+// setup and teardown utilities
+const connectDatabase = async () => {
+  await mongoose.connect(databaseUrl);
+  await mongoose.connection.db.dropDatabase();
+};
+
+const disconnectDatabase = async () => {
+  await mongoose.disconnect();
+};
 
 const newAlbum = {
   title: 'Space is the Place',
@@ -16,45 +24,36 @@ const newAlbum = {
   year: '1973',
   rating: 5
 };
-// setup and teardown utilities
-async function connectDatabase() {
-  await mongoose.connect(databaseUrl);
-  await mongoose.connection.db.dropDatabase();
-}
 
-async function disconnectDatabase() {
-  await mongoose.connection.db.dropDatabase();
-  await mongoose.disconnect();
-}
-
-describe('/', async () => {
-  // setup and teardown utilities
-  beforeEach(connectDatabase);
-  afterEach(disconnectDatabase);
+describe('/api/albums', () => {
   describe('GET', () => {
+    beforeEach(connectDatabase);
+    afterEach(disconnectDatabase);
     it('should return a status of 200', async () => {
-      const response = await request(app).get('/');
+      const response = await request(app).get('/api/albums');
 
       assert.equal(response.status, 200);
     });
 
     it('should return an array of albums', async () => {
       await request(app)
-        .post('/add')
+        .post('/api/albums/add')
         .send(newAlbum);
 
-      const response = await request(app).get('/');
+      const response = await request(app).get('/api/albums');
 
       assert.include(JSON.stringify(response.body), newAlbum.title);
       assert.equal(response.body.length, 1);
     });
   });
 
-  describe('Server path: `/add`', () => {
+  describe('Server path: `/api/albums/add`', () => {
     describe('POST', () => {
+      beforeEach(connectDatabase);
+      afterEach(disconnectDatabase);
       it('should return a `201` status code when creating a new album', async () => {
         const response = await request(app)
-          .post('/add')
+          .post('/api/albums/add')
           .send(newAlbum);
 
         assert.equal(response.status, 201);
@@ -62,7 +61,7 @@ describe('/', async () => {
 
       it('should save the new album to the database', async () => {
         await request(app)
-          .post('/add')
+          .post('/api/albums/add')
           .send(newAlbum);
 
         const createdAlbum = await Album.findOne(newAlbum);
