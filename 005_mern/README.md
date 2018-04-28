@@ -1062,8 +1062,62 @@ npm i -g @storybook/cli
 getstorybook
 ```
 
-* `Storybook` will install all dependencies and automatically add nom scripts to `package.json`.
-* Run `storybook`
+* `Storybook` will install all dependencies and automatically add nom scripts to `package.json`. 
+
+The project now looks like this: 
+
+```txt
+├── README.md
+├── cypress
+│   ├── fixtures
+│   │   └── albums.json
+│   ├── integration
+│   │   └── app-init.spec.js
+│   ├── plugins
+│   │   └── index.js
+│   ├── screenshots
+│   │   └── my-image.png
+│   └── support
+│       ├── commands.js
+│       └── index.js
+├── cypress.json
+├── index.html
+├── nodemon.json
+├── package.json
+├── public
+│   ├── favicon.ico
+│   └── index.html
+├── setupTests.js
+├── src
+│   ├── client
+│   │   ├── App.js
+│   │   ├── __tests__
+│   │   │   ├── Card.test.js
+│   │   │   └── __snapshots__
+│   │   ├── components
+│   │   │   ├── Card.js
+│   │   │   └── CardGrid.js
+│   │   ├── index.css
+│   │   ├── index.js
+│   │   └── lib
+│   │       └── service.js
+│   └── server
+│       ├── database
+│       │   └── index.js
+│       ├── index.js
+│       ├── models
+│       │   └── index.js
+│       ├── routes
+│       │   ├── index.js
+│       │   └── index.test.js
+│       └── sampledata.json
+├── stories
+│   └── index.stories.js
+├── webpack.config.js
+└── yarn.lock
+```
+
+* Run `storybook` to start the dev server on port 6006
 
 ```bash
 yarn storybook
@@ -1084,7 +1138,11 @@ storiesOf('Card', module).add('default', () => <Card />);
 
 ```
 
-Storybook runs outside of your app, and really forces you to think about how your components look and function in isolation. This is great if you any notion of reusing them elsewhere or building up a UI library. But keep in mind, you'll have to bring or mock your own state, global styles, and webpack configuration. An example is if you're using webpack for svg-loading, you'll need to extend `webpack.config.js` in `.storybook/`.
+Storybook runs outside of your app, and really forces you to think about how your components look and function in isolation. This is great if you any notion of reusing them elsewhere or building up a UI library. But keep in mind, you'll have to bring or mock your own state, global styles, and Webpack configuration. 
+
+One example already evident with this first story is that the box-sizing styles I imported into the `index.js` of the React app have no effect here
+
+Another example that will come up soon is that I'll want to use Webpack for loading SVG icons, which means I'll need to extend `webpack.config.js` in `.storybook/` in addition to `webpack.config.js` at the root of the project.
 
 Some things are not immediately intuitive. But the small hurtles will challenge you to create more usable, modular, and reusable UI.
 
