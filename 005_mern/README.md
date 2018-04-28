@@ -1049,3 +1049,44 @@ describe('Card', () => {
 
 
 TODO: review [https://www.robinwieruch.de/react-testing-tutorial/](https://www.robinwieruch.de/react-testing-tutorial/)
+
+### Setup Storybook
+As mentioned earlier, storybook is particularly well-suited for quickly prototyping and visually tweaking components in isolation. I'll use other tools like `Jest/Enzyme` and `Cypress` for testing functionality integration but `Storybook` will be my atomic playground.
+
+The setup is easy, and it's really satisfying to have this extra little dev server for tinkering with components.
+
+* Install `Storybook` globally and run `get storybook`
+
+```bash
+npm i -g @storybook/cli
+getstorybook
+```
+
+* `Storybook` will install all dependencies and automatically add nom scripts to `package.json`.
+* Run `storybook`
+
+```bash
+yarn storybook
+```
+
+* Import a component and add a story to `stories/index.stories.js`
+
+```js
+import React from 'react';
+// ...boilerplate imports
+import { storiesOf } from '@storybook/react';
+
+import Card from '../src/client/components/Card';
+
+// ...boilerplate stories
+
+storiesOf('Card', module).add('default', () => <Card />);
+
+```
+
+Storybook runs outside of your app, and really forces you to think about how your components look and function in isolation. This is great if you any notion of reusing them elsewhere or building up a UI library. But keep in mind, you'll have to bring or mock your own state, global styles, and webpack configuration. An example is if you're using webpack for svg-loading, you'll need to extend `webpack.config.js` in `.storybook/`.
+
+Some things are not immediately intuitive. But the small hurtles will challenge you to create more usable, modular, and reusable UI.
+
+## State Management
+
