@@ -598,6 +598,8 @@ Our project structure now resembles this:
 ```
 
 ### Write First Feature Tests with Cypress
+_Disclaimer: This is my first time to test drive Cypress._ 🎉
+
 * Add the devServer url as the `baseUrl` to `cypress.json`
 
 ```js
@@ -1147,4 +1149,71 @@ Another example that will come up soon is that I'll want to use Webpack for load
 Some things are not immediately intuitive. But the small hurtles will challenge you to create more usable, modular, and reusable UI.
 
 ## State Management
+We want a central store to keep track of some of the client state, for instance, if the user is authenticated or not, the user id, state of certain UI affecting the whole page or numerous components,  and the user's albums or anything else we want to cache from the server to cut down on network requests. 
+
+There are many options, but `redux` is still the go-to tool for state management in `React`. As the project grows even a little, its benefits greatly outweigh the slight extra complexity of reducers, actions, and composing over components
+with mapper functions.
+
+Questions will naturally arise about when to use the Redux store vs. local state vs. local storage and when to bypass the store altogether and query the database directly via our Express api.
+
+* Install `redux`, `react-redux`, and `redux-thunk`
+
+```bash
+yarn add redux react-redux redux-thunk
+```
+
+> Touch `src/client/store/index.js` (this step includes setting up standard middleware `thunk` for asynchronous actions and the react dev tools; to use the latter, install the react dev tools extension for your browser)
+
+```js
+// src/client/store/index.js
+
+import {createStore, compose, applyMiddleware} from 'redux';
+import thunk from 'redux-thunk';
+import reducers from '../reducers';
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(reducers, composeEnhancers(applyMiddleware(thunk)));
+export default store;
+```
+
+* Touch `src/client/reducers/index.js`
+
+```js
+// src/client/reducers/index.js
+
+const initialState = {};
+
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    default:
+      return state;
+  }
+};
+
+export default reducer;
+
+```
+
+* Import the store and provider into `src/client/index.js` and wrap the top-level component
+
+```js
+// src/client/index.js
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+
+import App from './App';
+import store from './store/';
+import './index.css';
+
+const app = (
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
+
+ReactDOM.render(app, document.getElementById('root'));
+
+```
 
