@@ -1151,6 +1151,7 @@ Some things are not immediately intuitive. But the small hurtles will challenge 
 ## State Management
 We want a central store to keep track of some of the client state, for instance, if the user is authenticated or not, the user id, state of certain UI affecting the whole page or numerous components,  and the user's albums or anything else we want to cache from the server to cut down on network requests. 
 
+### Setup Redux
 There are many options, but `redux` is still the go-to tool for state management in `React`. As the project grows even a little, its benefits greatly outweigh the slight extra complexity of reducers, actions, and composing over components
 with mapper functions.
 
