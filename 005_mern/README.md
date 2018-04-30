@@ -1218,3 +1218,313 @@ ReactDOM.render(app, document.getElementById('root'));
 
 ```
 
+## Implement features
+Now that we've setup Webpack, Mongo, Express, React, Redux, and various testing tools, let's actually implement some features. 
+
+Here's a list of some features for consideration: 
+
++ Pagination, or page views for the main CardGrid component when there are too many items for one page.
++ Lazy-loading those page views, so we don't get more data than we actually need to display to the user at one time.
++ Filter, sort, and search utility menu that is compatible with the pagination or lazy loading described above.
++ An auth workflow. Anonymous users will have read access to all albums in the database. However, if they want to add an album to their own collection, create an album, or edit one of the albums they've created or added to their collection, they will need to login. This should include a login page and signup page.
++ The user collection page.
++ The add album form with validation and an image upload feature.
++ The edit album form.
+
+### Pagination
+Given 7 records and a max of 5 records per page, the page should render 5 records and there should be a link to the next page.
+
+* Start Mongodb:```mongod```
+
+* In another terminal tab, start the dev server: ```yarn dev```
+* In another terminal tab, start Cypress: ```yarn cypress```
+
+We already have a Cypress test that stubs a call to the API, gives us 7 items, and asserts that 7 cards are on the page. We'll want to replace this 7 with a variable. For testing, we'll be using 5 as the `maxItemsPerPage`.
+
+* Update the first test to assert that there should be greater than 0 items as a result of the API request.
+* Write a second tests to assert that there should be `maxItemsPerPage` items or less.
+
+```js
+// cypress/integration/app-init.spec.js
+
+describe('App intitialization', () => {
+  beforeEach(() => {
+    cy.server();
+    cy.route('GET', '/api/albums', 'fixture:albums');
+    cy.visit('/');
+  });
+
+  it('Loads todos on page load', () => {
+    cy.get('[data-cy=Card]').should('have.length.above', 0);
+  });
+
+  it('Loads no more than `maxItemsPerPage` on page load', () => {
+    const maxItemsPerPage = 5;
+    cy.get('[data-cy=Card]').should('have.lengthOf', maxItemsPerPage);
+  });
+});
+
+```
+
+This first test fails.
+
+Let's start by chunking the albums array in the `CardGrid` component.
+
+```bash
+yarn add lodash
+```
+
+
+```js
+// src/client/components/CardGrid.js
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import { chunk } from 'lodash';
+
+import Card from './Card';
+
+const maxItemsPerPage = 5;
+const pages = albums => chunk(albums, maxItemsPerPage);
+
+const CardGrid = props => (
+  <div data-cy="CardGrid">
+    {props.albums ? pages(props.albums)[0].map(album => <Card {...album} key={album._id} />) : null}
+  </div>
+);
+
+CardGrid.propTypes = {
+  albums: PropTypes.arrayOf(PropTypes.object)
+};
+
+CardGrid.defaultProps = {
+  albums: [{}]
+};
+
+export default CardGrid;
+
+```
+
+Now we're only showing the first five pages. Instead of manually accessing the first page with [0], let's store the current page number in local state. We'll need to change this stateless functional component to a class component.
+
+```js
+// src/client/components/CardGrid.js
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import { chunk } from 'lodash';
+
+import Card from './Card';
+
+class CardGrid extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      maxItemsPerPage: 5,
+      currentPageIndex: 0
+    };
+    this.pages = this.pages.bind(this);
+  }
+  pages(albums) {
+    return chunk(albums, this.state.maxItemsPerPage);
+  }
+
+  render() {
+    return (
+      <div data-cy="CardGrid">
+        {this.props.albums
+          ? this.pages(this.props.albums)[this.state.currentPageIndex].map(album => (
+            <Card {...album} key={album._id} />
+            ))
+          : null}
+      </div>
+    );
+  }
+}
+
+CardGrid.propTypes = {
+  albums: PropTypes.arrayOf(PropTypes.object)
+};
+
+CardGrid.defaultProps = {
+  albums: [{}]
+};
+
+export default CardGrid;
+
+```
+
+Let's make sure there's a next and previous button and that when it's clicked it causes the page to render the next page of items.
+
+```js
+// cypress/integration/app-init.spec.js
+
+// ...other tests
+
+  it('Renders a next button', () => {
+    cy.get('button[data-cy=nextPage]');
+  });
+
+  it('should display the next page of results when the next page is button', () => {
+    cy.get('button[data-cy=nextPage]').click();
+    cy.get('[data-cy=Card]').should('have.lengthOf', 2);
+  });
+
+```
+ 
+Now, let's create a higher-order component to wrap our CardGrid and handle pagination. We'll be able to expand on this and re-use it in our app.
+ 
+```js
+// src/client/components/withPages.js
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import { chunk } from 'lodash';
+import styled from 'styled-components';
+
+const PageButton = styled.button``;
+
+const withPages = (WrappedComponent) => {
+  class WithPages extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        maxItemsPerPage: props.maxItemsPerPage,
+        pages: null,
+        numberOfPages: 1,
+        currentPageIndex: 0
+      };
+      this.pages = this.pages.bind(this);
+      this.nextPage = this.nextPage.bind(this);
+      this.prevPage = this.prevPage.bind(this);
+    }
+
+    componentDidMount() {
+      const pages = this.pages(this.props.items);
+      const numberOfPages = pages.length;
+      this.setState({ pages, numberOfPages });
+    }
+
+    pages(items) {
+      return chunk(items, this.state.maxItemsPerPage);
+    }
+    nextPage() {
+      this.setState((prevState) => {
+        const nextPageIndex = prevState.currentPageIndex + 1;
+        return { currentPageIndex: nextPageIndex };
+      });
+    }
+
+    prevPage() {
+      this.setState((prevState) => {
+        const prevPageIndex = prevState.currentPageIndex - 1;
+        return { currentPageIndex: prevPageIndex };
+      });
+    }
+
+    render() {
+      return (
+        <div>
+          {this.state.pages !== null ? (
+            <WrappedComponent
+              {...this.props}
+              items={this.state.pages[this.state.currentPageIndex]}
+            />
+          ) : null}
+          <p>
+            {this.state.currentPageIndex + 1} of {this.state.numberOfPages} pages
+          </p>
+          {this.state.currentPageIndex > 0 ? (
+            <PageButton data-cy="prevPage" onClick={this.prevPage}>
+              Previous
+            </PageButton>
+          ) : null}
+          {this.state.currentPageIndex < this.state.numberOfPages - 1 ? (
+            <PageButton data-cy="nextPage" onClick={this.nextPage}>
+              Next
+            </PageButton>
+          ) : null}
+        </div>
+      );
+    }
+  }
+  WithPages.propTypes = {
+    items: PropTypes.arrayOf(PropTypes.object),
+    maxItemsPerPage: PropTypes.number
+  };
+
+  WithPages.defaultProps = {
+    items: [{}],
+    maxItemsPerPage: 10
+  };
+  return WithPages;
+};
+
+export default withPages;
+
+``` 
+
+
+```js
+// src/client/components/CardGrid.js
+
+import React from 'react';
+import PropTypes from 'prop-types';
+
+import Card from './Card';
+import withPages from './withPages';
+
+const CardGrid = props => (
+  <div data-cy="CardGrid">
+    {props.items !== null ? props.items.map(album => <Card {...album} key={album._id} />) : null}
+  </div>
+);
+
+CardGrid.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.object)
+};
+
+CardGrid.defaultProps = {
+  items: [{}]
+};
+
+export default withPages(CardGrid);
+
+```
+
+Now, when we use the `CardGrid` album, we also want to pass down a value for the `maxItemsPerPage` prop, otherwise it will default to 10.
+
+```js
+import React from 'react';
+import { loadAlbums } from './lib/service';
+import CardGrid from './components/CardGrid';
+
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      albums: null
+    };
+  }
+
+  componentDidMount() {
+    loadAlbums().then(({ data }) => {
+      this.setState({ albums: data });
+    });
+  }
+  render() {
+    return (
+      <div>
+        {this.state.albums !== null ? (
+          <CardGrid items={this.state.albums} maxItemsPerPage={5} />
+        ) : null}
+      </div>
+    );
+  }
+}
+
+```
+
+
+### Filter, Sort, and Search
+

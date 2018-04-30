@@ -9,7 +9,9 @@
     "no-console": "off",
     "comma-dangle": "off",
     "no-underscore-dangle": "off",
-    "react/jsx-filename-extension": "off"
+    "react/jsx-filename-extension": "off",
+    "react/no-multi-comp": "off",
+    "react/no-did-mount-set-state": "off"
   },
   "plugins": ["jest"]
 }

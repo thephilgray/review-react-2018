@@ -5,7 +5,9 @@ import CardGrid from './components/CardGrid';
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { albums: null };
+    this.state = {
+      albums: null
+    };
   }
 
   componentDidMount() {
@@ -16,7 +18,9 @@ export default class App extends React.Component {
   render() {
     return (
       <div>
-        <CardGrid albums={this.state.albums} />
+        {this.state.albums !== null ? (
+          <CardGrid items={this.state.albums} maxItemsPerPage={5} />
+        ) : null}
       </div>
     );
   }

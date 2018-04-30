@@ -2,19 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Card from './Card';
+import withPages from './withPages';
 
 const CardGrid = props => (
   <div data-cy="CardGrid">
-    {props.albums ? props.albums.map(album => <Card {...album} key={album._id} />) : null}
+    {props.items !== null ? props.items.map(album => <Card {...album} key={album._id} />) : null}
   </div>
 );
 
 CardGrid.propTypes = {
-  albums: PropTypes.arrayOf(PropTypes.object)
+  items: PropTypes.arrayOf(PropTypes.object)
 };
 
 CardGrid.defaultProps = {
-  albums: [{}]
+  items: [{}]
 };
 
-export default CardGrid;
+export default withPages(CardGrid);
