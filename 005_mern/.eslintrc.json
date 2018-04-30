@@ -11,7 +11,8 @@
     "no-underscore-dangle": "off",
     "react/jsx-filename-extension": "off",
     "react/no-multi-comp": "off",
-    "react/no-did-mount-set-state": "off"
+    "react/no-did-mount-set-state": "off",
+    "import/prefer-default-export": "off"
   },
   "plugins": ["jest"]
 }

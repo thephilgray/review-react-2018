@@ -1528,3 +1528,144 @@ export default class App extends React.Component {
 
 ### Filter, Sort, and Search
 
+So far we haven't written any additional `Jest/Enzyme` tests and we haven't touched our `Redux` store. The `filter`, `sort`, and `search` feature set will present a good opportunity for this.
+
+When we touch one of these features, we want to be able to pass a different, modified array to the `CardGrid` component. But we also want to hold on to our current state of `albums` so that we don't have to pointlessly re-request it from the server. Therefore, we should save the response from our initial request in the `Redux` store. We can then either copy and modify that array when we want to filter, sort, or search. Or if we have many users and many items, we can handle this server-side with `Mongo` operators. For now, we'll try to keep things as close to the feature-level as possible.
+
+* Create base `albumsReducer`
+
+```js
+// src/client/reducers/albumsReducer.js
+
+const initialState = {
+  albums: null
+};
+
+const albumsReducer = (state = initialState, action) => {
+  switch (action.type) {
+    default:
+      return state;
+  }
+};
+
+export default albumsReducer;
+```
+
+* Modify `reducers/index.js` to return combined reducers
+
+```js
+// src/client/reducers/index.js
+
+import { combineReducers } from 'redux';
+import albumsReducer from './albumsReducer';
+
+export default combineReducers({ albums: albumsReducer });
+```
+
+* Touch `src/client/lib/constants.js`
+
+```js
+// src/client/lib/constants.js
+
+export const FETCH_ALBUMS_SUCCESS = 'FETCH_ALBUMS_SUCCESS';
+export const FETCH_ALBUMS_FAILURE = 'FETCH_ALBUMS_FAILURE';
+```
+
+
+* Touch `src/client/actions/index.js`
+* Move `loadAlbums` request into `fetchAlbums` action
+
+```js
+// src/client/actions/index.js
+
+import { FETCH_ALBUMS_SUCCESS, FETCH_ALBUMS_FAILURE } from '../lib/constants';
+import { loadAlbums } from '../lib/service';
+
+const fetchAlbumsFailure = error => ({
+  type: FETCH_ALBUMS_FAILURE,
+  error
+});
+
+const fetchAlbumsSuccess = albums => ({
+  type: FETCH_ALBUMS_SUCCESS,
+  albums
+});
+
+export const fetchAlbums = () => (dispatch) => {
+  loadAlbums()
+    .then(({ data }) => dispatch(fetchAlbumsSuccess(data)))
+    .catch(error => dispatch(fetchAlbumsFailure(error)));
+};
+
+
+```
+
+* Add cases to `albumsReducer`
+
+```js
+// src/client/reducers/albumsReducer.js
+
+import { FETCH_ALBUMS_FAILURE, FETCH_ALBUMS_SUCCESS } from '../lib/constants';
+
+const initialState = {
+  albums: null,
+  error: null
+};
+
+const albumsReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case FETCH_ALBUMS_FAILURE: {
+      return { error: action.error };
+    }
+    case FETCH_ALBUMS_SUCCESS: {
+      return { albums: action.albums };
+    }
+    default:
+      return state;
+  }
+};
+
+export default albumsReducer;
+
+```
+
+* Now, let's bring in both the state and the async function to our root component to use instead of local state
+
+```js
+// src/client/App.js
+
+import React from 'react';
+import { connect } from 'react-redux';
+
+import { fetchAlbums } from './actions';
+import CardGrid from './components/CardGrid';
+
+class App extends React.Component {
+  componentDidMount() {
+    this.props.loadAlbums();
+  }
+  render() {
+    return (
+      <div>
+        {this.props.albums !== null ? (
+          <CardGrid items={this.props.albums} maxItemsPerPage={5} />
+        ) : null}
+      </div>
+    );
+  }
+}
+
+const mapStateToProps = state => ({
+  albums: state.albums.albums
+});
+const mapDispatchToProps = dispatch => ({
+  loadAlbums: () => dispatch(fetchAlbums())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
+
+```
+
+* The albums are now safely stored in the `Redux` store. If we want to swap out the data that we pass to `CardGrid` and then quickly revert to the original data without fetching it from the server again, no problem.
+
+

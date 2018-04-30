@@ -1,27 +1,29 @@
 import React from 'react';
-import { loadAlbums } from './lib/service';
+import { connect } from 'react-redux';
+
+import { fetchAlbums } from './actions';
 import CardGrid from './components/CardGrid';
 
-export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      albums: null
-    };
-  }
-
+class App extends React.Component {
   componentDidMount() {
-    loadAlbums().then(({ data }) => {
-      this.setState({ albums: data });
-    });
+    this.props.loadAlbums();
   }
   render() {
     return (
       <div>
-        {this.state.albums !== null ? (
-          <CardGrid items={this.state.albums} maxItemsPerPage={5} />
+        {this.props.albums !== null ? (
+          <CardGrid items={this.props.albums} maxItemsPerPage={5} />
         ) : null}
       </div>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  albums: state.albums.albums
+});
+const mapDispatchToProps = dispatch => ({
+  loadAlbums: () => dispatch(fetchAlbums())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

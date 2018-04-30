@@ -1,10 +1,4 @@
-const initialState = {};
+import { combineReducers } from 'redux';
+import albumsReducer from './albumsReducer';
 
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    default:
-      return state;
-  }
-};
-
-export default reducer;
+export default combineReducers({ albums: albumsReducer });
