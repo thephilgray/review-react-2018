@@ -4,10 +4,12 @@ import { connect } from 'react-redux';
 
 import {
   fetchAlbums,
+  toggleSearchActive,
   sortByRatingAsc,
   sortByRatingDesc,
   sortByTitleAsc,
-  sortByTitleDesc
+  sortByTitleDesc,
+  filterBySearchQuery
 } from '../actions';
 
 const withAlbums = (WrappedComponent) => {
@@ -25,16 +27,20 @@ const withAlbums = (WrappedComponent) => {
   };
   const mapStateToProps = state => ({
     albums: state.albums.albums,
+    filteredAlbums: state.albums.filteredAlbums,
+    searchActive: state.albums.searchActive,
     sortOrder: state.albums.sortOrder
   });
-  const mapDispatchToProps = dispatch => ({
+  const mapDispatchToActions = dispatch => ({
     loadAlbums: () => dispatch(fetchAlbums()),
+    onFilterBySearchQuery: query => dispatch(filterBySearchQuery(query)),
+    onToggleSearchActive: () => dispatch(toggleSearchActive()),
     onSortByRatingAsc: () => dispatch(sortByRatingAsc()),
     onSortByRatingDesc: () => dispatch(sortByRatingDesc()),
     onSortByTitleAsc: () => dispatch(sortByTitleAsc()),
     onSortByTitleDesc: () => dispatch(sortByTitleDesc())
   });
-  return connect(mapStateToProps, mapDispatchToProps)(WithAlbums);
+  return connect(mapStateToProps, mapDispatchToActions)(WithAlbums);
 };
 
 export default withAlbums;

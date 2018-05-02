@@ -1494,6 +1494,8 @@ export default withPages(CardGrid);
 Now, when we use the `CardGrid` album, we also want to pass down a value for the `maxItemsPerPage` prop, otherwise it will default to 10.
 
 ```js
+// src/client/App.js
+
 import React from 'react';
 import { loadAlbums } from './lib/service';
 import CardGrid from './components/CardGrid';
@@ -1697,6 +1699,8 @@ export const sortByRatingDesc = () => ({ type: SORT_BY_RATING_DESC });
 * Touch `src/client/__tests__/reducers/albumsReducer.test.js`
 
 ```js
+// src/client/__tests__/reducers/albumsReducer.test.js
+
 import albumsReducer from '../../reducers/albumsReducer';
 import * as constants from '../../lib/constants';
 import sampleData from '../../../server/sampledata.json';
@@ -1835,7 +1839,7 @@ const albumsReducer = (state = initialState, action) => {
 export default albumsReducer;
 ```
 
-### Refactor and Connect
+#### Refactor and Connect
 
 * Extract the withPages HOC logic to a separate file `src/client/hocs/withPages.js`
 
@@ -2075,3 +2079,698 @@ CardGrid.defaultProps = {
 
 export default withPages(CardGrid);
 ```
+
+The `App` component can be converted to a stateless functional component for the time being: 
+
+```js
+// src/client/App.js
+
+import React from 'react';
+
+import AlbumGrid from './containers/AlbumGrid';
+
+const App = () => <AlbumGrid />;
+
+export default App;
+```
+
+
+The project structure should now look like this:
+
+```txt
+├── README.md
+├── cypress
+│   ├── fixtures
+│   │   └── albums.json
+│   ├── integration
+│   │   └── app-init.spec.js
+│   ├── plugins
+│   │   └── index.js
+│   ├── screenshots
+│   │   └── my-image.png
+│   └── support
+│       ├── commands.js
+│       └── index.js
+├── cypress.json
+├── index.html
+├── nodemon.json
+├── package.json
+├── public
+│   ├── favicon.ico
+│   └── index.html
+├── setupTests.js
+├── src
+│   ├── client
+│   │   ├── App.js
+│   │   ├── __tests__
+│   │   │   ├── components
+│   │   │   ├── containers
+│   │   │   └── reducers
+│   │   ├── actions
+│   │   │   └── index.js
+│   │   ├── components
+│   │   │   ├── Card.js
+│   │   │   └── CardGrid.js
+│   │   ├── containers
+│   │   │   ├── AlbumGrid.js
+│   │   ├── hocs
+│   │   │   ├── withAlbums.js
+│   │   │   └── withPages.js
+│   │   ├── index.css
+│   │   ├── index.js
+│   │   ├── lib
+│   │   │   ├── constants.js
+│   │   │   └── service.js
+│   │   ├── reducers
+│   │   │   ├── albumsReducer.js
+│   │   │   └── index.js
+│   │   └── store
+│   │       └── index.js
+│   └── server
+│       ├── database
+│       │   └── index.js
+│       ├── index.js
+│       ├── models
+│       │   └── index.js
+│       ├── routes
+│       │   ├── index.js
+│       │   └── index.test.js
+│       └── sampledata.json
+├── stories
+│   └── index.stories.js
+├── webpack.config.js
+└── yarn.lock
+
+```
+
+### Search
+Again, there are better ways to approach search in terms of scalability, but for this stage of the project, we're going to implement a quick and dirty client-side search using the `filter` array method.
+
+* Write a reducer new test in `src/client/__tests__/reducers/albumsReducer.test.js`
+
+```js
+// src/client/__tests__/reducers/albumsReducer.test.js
+
+import albumsReducer from '../../reducers/albumsReducer';
+import * as constants from '../../lib/constants';
+import sampleData from '../../../server/sampledata.json';
+
+describe('albumsReducer', () => {
+  let loadedState;
+  beforeEach(() => {
+    loadedState = albumsReducer(undefined, {
+      type: constants.FETCH_ALBUMS_SUCCESS,
+      albums: sampleData
+    });
+  });
+
+// ...other tests
+
+  it('should filter artists by artist and title', () => {
+    const query = 'space';
+    const filteredState = albumsReducer(loadedState, {
+      type: constants.FILTER_BY_SEARCH_QUERY,
+      query
+    });
+    const expected = sampleData.filter((album) => {
+      const re = new RegExp(query, 'gi');
+      return album.title.match(re) || album.artist.match(re);
+    });
+
+    expect(filteredState.filteredAlbums).toMatchObject(expected);
+  });
+});
+```
+
+* Add `FILTER_BY_SEARCH_QUERY` to `src/client/lib/constants.js`
+* Create the `filterBySearchQuery` action
+
+```js
+// src/client/actions/index.js
+
+import {
+// ...other constants
+  FILTER_BY_SEARCH_QUERY
+} from '../lib/constants';
+import { loadAlbums } from '../lib/service';
+
+// ...other actions
+
+export const filterBySearchQuery = query => ({ type: FILTER_BY_SEARCH_QUERY, query });
+```
+
+* Create the reducer case for `FILTER_BY_SEARCH_QUERY`
+
+We will need to manage a new piece of state in our store `filteredAlbums`; we might also need a flag `searchActive` because our components will need to know whether to use `albums` or `filteredAlbums` in the `CardGrid` display. So, we'll also set `searchActive` to false in every other case.
+
+```js
+// src/client/reducers/albumsReducer.js
+
+import {
+  FETCH_ALBUMS_FAILURE,
+  FETCH_ALBUMS_SUCCESS,
+  SORT_BY_RATING_ASC,
+  SORT_BY_RATING_DESC,
+  SORT_BY_TITLE_ASC,
+  SORT_BY_TITLE_DESC,
+  FILTER_BY_SEARCH_QUERY
+} from '../lib/constants';
+
+const initialState = {
+  albums: null,
+  filteredAlbums: null,
+  error: null,
+  sortOrder: '',
+  searchActive: false
+};
+
+const albumsReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case FETCH_ALBUMS_FAILURE: {
+      return { ...state, error: action.error };
+    }
+
+    case FETCH_ALBUMS_SUCCESS: {
+      return {
+        ...state,
+        albums: action.albums.sort((a, b) => {
+          if (a.title > b.title) return 1;
+          else if (a.title < b.title) return -1;
+          return 0;
+        }),
+        sortOrder: SORT_BY_TITLE_ASC,
+        searchActive: false
+      };
+    }
+
+    case FILTER_BY_SEARCH_QUERY: {
+      const filteredAlbums = state.albums.slice().filter((album) => {
+        const re = new RegExp(action.query, 'gi');
+        return album.title.match(re) || album.artist.match(re);
+      });
+      return { ...state, searchActive: true, filteredAlbums };
+    }
+
+    case SORT_BY_TITLE_ASC: {
+      return {
+        ...state,
+        albums: state.albums.slice().sort((a, b) => {
+          if (a.title > b.title) return 1;
+          else if (a.title < b.title) return -1;
+          return 0;
+        }),
+        sortOrder: SORT_BY_TITLE_ASC,
+        searchActive: false
+      };
+    }
+
+    case SORT_BY_TITLE_DESC: {
+      return {
+        ...state,
+        albums: state.albums.slice().sort((a, b) => {
+          if (a.title > b.title) return -1;
+          else if (a.title < b.title) return 1;
+          return 0;
+        }),
+        sortOrder: SORT_BY_TITLE_DESC,
+        searchActive: false
+      };
+    }
+
+    case SORT_BY_RATING_ASC: {
+      return {
+        ...state,
+        albums: state.albums.slice().sort((a, b) => a.rating - b.rating),
+        sortOrder: SORT_BY_RATING_ASC,
+        searchActive: false
+      };
+    }
+    case SORT_BY_RATING_DESC: {
+      return {
+        ...state,
+        albums: state.albums.slice().sort((a, b) => b.rating - a.rating),
+        sortOrder: SORT_BY_RATING_DESC,
+        searchActive: false
+      };
+    }
+
+    default:
+      return state;
+  }
+};
+
+export default albumsReducer;
+```
+
+The test should now be passing.
+
+* Import the `filterBySearchQuery` action into `src/client/hocs/withAlbums.js`, our connected HOC
+* Map `filteredAlbums` and `searchActive` to state
+* Map dispatch to `filterBySearchQuery`
+
+```js
+> // src/client/hocs/withAlbums.js
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
+import {
+  fetchAlbums,
+  sortByRatingAsc,
+  sortByRatingDesc,
+  sortByTitleAsc,
+  sortByTitleDesc,
+  filterBySearchQuery
+} from '../actions';
+
+const withAlbums = (WrappedComponent) => {
+  class WithAlbums extends React.Component {
+    componentDidMount() {
+      this.props.loadAlbums();
+    }
+
+    render() {
+      return <WrappedComponent {...this.props} />;
+    }
+  }
+  WithAlbums.propTypes = {
+    loadAlbums: PropTypes.func.isRequired
+  };
+  const mapStateToProps = state => ({
+    albums: state.albums.albums,
+    filteredAlbums: state.albums.filteredAlbums,
+    searchActive: state.albums.searchActive,
+    sortOrder: state.albums.sortOrder
+  });
+  const mapDispatchToActions = dispatch => ({
+    loadAlbums: () => dispatch(fetchAlbums()),
+    onFilterBySearchQuery: query => dispatch(filterBySearchQuery(query)),
+    onSortByRatingAsc: () => dispatch(sortByRatingAsc()),
+    onSortByRatingDesc: () => dispatch(sortByRatingDesc()),
+    onSortByTitleAsc: () => dispatch(sortByTitleAsc()),
+    onSortByTitleDesc: () => dispatch(sortByTitleDesc())
+  });
+  return connect(mapStateToProps, mapDispatchToActions)(WithAlbums);
+};
+
+export default withAlbums;
+```
+
+* Write a feature test that ensures that `filteredAlbums` is used as the data source if `searchActive`
+
+```js
+// cypress/integration/app-init.spec.js
+
+describe('App intitialization', () => {
+  beforeEach(() => {
+    cy.server();
+    cy.route('GET', '/api/albums', 'fixture:albums');
+    cy.visit('/');
+  });
+
+// ...other tests
+
+  it('should display only the search results when the user enters text into the search field', () => {
+    const query = 'space';
+    cy.get('input[data-cy=searchAlbums]').type(query);
+    cy.get('[data-cy=Card]').should('have.lengthOf', 1);
+  });
+});
+```
+
+* Create a text input for users to enter their queries and switch out the data with `filteredAlbums` if `searchActive
+
+```js
+// src/client/containers/AlbumGrid.js
+
+import React from 'react';
+
+import withAlbums from '../hocs/withAlbums';
+import CardGrid from '../components/CardGrid';
+
+export const AlbumGrid = class extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      query: ''
+    };
+    this.search = this.search.bind(this);
+  }
+
+  search(event) {
+    this.setState({ query: event.target.value });
+    this.props.onFilterBySearchQuery(this.state.query);
+  }
+  render() {
+    const { props } = this;
+    let items;
+    if (props.searchActive && this.state.query) {
+      items = props.filteredAlbums;
+    } else {
+      items = props.albums;
+    }
+    return (
+      <div>
+        <div>
+          <input
+            type="text"
+            data-cy="searchAlbums"
+            onChange={this.search}
+            value={this.state.query}
+          />
+          <button onClick={props.onSortByRatingAsc}>Sort By Rating (asc)</button>
+          <button onClick={props.onSortByRatingDesc}>Sort By Rating (desc)</button>
+          <button onClick={props.onSortByTitleAsc}>Sort By Title (asc)</button>
+          <button onClick={props.onSortByTitleDesc}>Sort By Title (desc)</button>
+          <p>{props.sortOrder}</p>
+        </div>
+
+        {props.albums ? <CardGrid items={items} maxItemsPerPage={5} /> : null}
+      </div>
+    );
+  }
+};
+
+export default withAlbums(AlbumGrid);
+```
+
+There is at least one bug. Right now, if nothing matches the query, we're seeing fake album created by `defaultProps` in the `CardGrid` and `Card` components. Another bug is that the search seems to be lagging a key or two behind. This is because `setState` is asynchronous, which means we're dispatching the `filterBySearchQuery` with a state value before that state value has been updated.
+
+We just need to make a couple of adjustments to our `CardGrid` component.
+
+* Remove the empty object in the `defaultProps` array value for `items`
+* If `items` is empty, display a message to the user.
+
+```js
+// src/client/__tests__/components/CardGrid.test.js
+
+// ...imports
+
+describe('CardGrid', () => {
+// ...other tests
+
+  it('displays a message to the user if `items` is empty', () => {
+    const emptyMessage = 'No items.';
+    const wrapper = shallow(<CardGrid items={[]} />);
+    expect(wrapper.find('p').text()).toContain(emptyMessage);
+  });
+});
+```
+
+
+```js
+// src/client/components/CardGrid.js
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { isEmpty } from 'lodash';
+
+import Card from './Card';
+import withPages from '../hocs/withPages';
+
+const CardGridWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
+
+export const CardGrid = props => (
+  <CardGridWrapper data-cy="CardGrid">
+    {!isEmpty(props.items) ? (
+      props.items.map(album => <Card {...album} key={album._id} />)
+    ) : (
+      <p>No items.</p>
+    )}
+  </CardGridWrapper>
+);
+
+CardGrid.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.object)
+};
+
+CardGrid.defaultProps = {
+  items: []
+};
+
+export default withPages(CardGrid);
+```
+
+Luckily, `setState` also takes a callback. So, we can move the call to dispatch there.
+
+```js
+// src/client/containers/AlbumGrid.js
+
+// ...other component code
+
+  search(event) {
+    this.setState({ query: event.target.value }, () =>
+      this.props.onFilterBySearchQuery(this.state.query));
+  }
+
+// ...other component code
+```
+
+#### Refactor and Style
+
+* Move the search and sort controls into their own component `src/client/containers/SearchSortControls.js`
+
+The updated `AlbumGrid` component will look like this
+
+```js
+// src/client/containers/AlbumGrid.js
+
+import React from 'react';
+
+import withAlbums from '../hocs/withAlbums';
+import CardGrid from '../components/CardGrid';
+import SearchSortControls from '../containers/SearchSortControls';
+
+export const AlbumGrid = class extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      query: ''
+    };
+    this.search = this.search.bind(this);
+  }
+
+  search(event) {
+    this.setState({ query: event.target.value }, () =>
+      this.props.onFilterBySearchQuery(this.state.query));
+  }
+  render() {
+    const { props } = this;
+    let items;
+    if (props.searchActive && this.state.query) {
+      items = props.filteredAlbums;
+    } else {
+      items = props.albums;
+    }
+    return (
+      <div>
+        <SearchSortControls
+          search={this.search}
+          searchActive={props.searchActive}
+          query={this.state.query}
+          onSortByRatingAsc={props.onSortByRatingAsc}
+          onSortByRatingDesc={props.onSortByRatingDesc}
+          onSortByTitleAsc={props.onSortByTitleAsc}
+          onSortByTitleDesc={props.onSortByTitleDesc}
+          sortOrder={props.sortOrder}
+        />
+        {props.albums ? <CardGrid items={items} maxItemsPerPage={5} /> : null}
+      </div>
+    );
+  }
+};
+
+export default withAlbums(AlbumGrid);
+
+```
+
+* Create styled-components for the buttons and search field in `src/client/containers/SearchSortControls.js`
+
+```js
+// src/client/containers/SearchSortControls.js  
+
+import React from 'react';
+import styled from 'styled-components';
+
+const SearchSortControlsWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 310px;
+  margin: 1em auto;
+  justify-content: center;
+  align-items: center;
+  background: #c4c4c4;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  height: 3em;
+`;
+
+const Button = styled.button`
+  cursor: pointer;
+  background: transparent;
+  border: transparent;
+`;
+
+const SearchInput = styled.input`
+  font-size: 1.5em;
+  width: ${props => (props.active ? '100%' : '0')};
+  padding: ${props => (props.active ? '0.5em' : '0')};
+  flex: ${props => (props.active ? '3 0 50%' : '0')};
+  margin: 0;
+  border: none;
+  transition: all 0.5s ease-in-out;
+`;
+
+const SearchSortControls = class extends React.Component {
+  constructor(props) {
+    super(props);
+    this.searchInput = null;
+    this.searchButton = null;
+    this.searchButtonHandler = this.searchButtonHandler.bind(this);
+  }
+
+  searchButtonHandler() {
+    this.props.onToggleSearchActive();
+    if (this.props.searchActive) {
+      this.searchButton.focus();
+    } else {
+      this.searchInput.focus();
+    }
+  }
+
+  render() {
+    const { props } = this;
+
+    return (
+      <SearchSortControlsWrapper>
+        <SearchInput
+          type="text"
+          data-cy="searchAlbums"
+          onChange={props.search}
+          value={props.query}
+          active={props.searchActive}
+          innerRef={(el) => {
+            this.searchInput = el;
+          }}
+        />
+        <Button
+          data-cy="searchButton"
+          onClick={this.searchButtonHandler}
+          innerRef={(el) => {
+            this.searchButton = el;
+          }}
+        >
+          Search
+        </Button>
+        <Button onClick={props.onSortByRatingAsc}>Sort By Rating (asc)</Button>
+        <Button onClick={props.onSortByRatingDesc}>Sort By Rating (desc)</Button>
+        <Button onClick={props.onSortByTitleAsc}>Sort By Title (asc)</Button>
+        <Button onClick={props.onSortByTitleDesc}>Sort By Title (desc)</Button>
+      </SearchSortControlsWrapper>
+    );
+  }
+};
+
+export default SearchSortControls;
+```
+
+* For this change, we had to go up the chain, adding the `onToggleSearchActive` prop, a new `toggleSearchActive` action, and `TOGGLE_SEARCH_ACTIVE` reducer
+
+```js
+// src/client/containers/AlbumGrid.js
+
+<SearchSortControls
+    // ....other props
+    onToggleSearchActive=
+    {props.onToggleSearchActive}
+  />
+  
+  // src/client/hocs/withAlbums.js
+  
+import {toggleSearchActive, /** ...other actions **/} from '../actions';
+
+  const mapStateToProps = state => ({
+  // ...other mapped state
+    searchActive: state.albums.searchActive,
+  });
+    
+  const mapDispatchToActions = dispatch => ({
+  // ...other mapped actions
+    onToggleSearchActive: () => dispatch(toggleSearchActive()),
+  });
+
+
+// src/client/lib/constants.js
+
+// ...other constants
+export const TOGGLE_SEARCH_ACTIVE = 'TOGGLE_SEARCH_ACTIVE';
+
+// src/client/actions/index.js
+
+import {
+// ... other imports
+  TOGGLE_SEARCH_ACTIVE
+} from '../lib/constants';
+import { loadAlbums } from '../lib/service';
+
+// ...other actions
+
+export const toggleSearchActive = () => ({ type: TOGGLE_SEARCH_ACTIVE });
+
+// src/client/reducers/albumsReducer.js
+
+import {
+// ...other constants
+  TOGGLE_SEARCH_ACTIVE,
+} from '../lib/constants';
+
+const initialState = {
+  albums: null,
+  filteredAlbums: null,
+  error: null,
+  sortOrder: '',
+  searchActive: false
+};
+
+const albumsReducer = (state = initialState, action) => {
+  switch (action.type) {
+  
+  // ...other reducer cases
+
+    case TOGGLE_SEARCH_ACTIVE: {
+      if (state.searchActive) {
+        return { ...state, searchActive: false, filteredAlbums: null };
+      }
+      return { ...state, searchActive: true };
+    }
+
+    default:
+      return state;
+  }
+};
+
+export default albumsReducer;
+```
+
+This slight change in functionality, requiring the user to click the search button before they can enter text means that we need to update one `Cypress` test which is now failing.
+
+* Add a command to click the search button before attempting to find and type in the search 
+
+```js
+// cypress/integration/app-init.spec.js
+
+// ...other tests
+
+it('should display only the search results when the user enters text into the search field', () => {
+    const query = 'space';
+    cy.get('button[data-cy="searchButton"]').click();
+    cy.get('input[data-cy=searchAlbums]').type(query);
+    cy.get('[data-cy=Card]').should('have.lengthOf', 1);
+  });
+```
+

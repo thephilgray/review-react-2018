@@ -50,4 +50,17 @@ describe('albumsReducer', () => {
     const lastItem = sortedState.albums[sortedState.albums.length - 1].rating;
     expect(firstItem).toBeGreaterThanOrEqual(lastItem);
   });
+
+  it('should filter artists by artist and title', () => {
+    const query = 'space';
+    const filteredState = albumsReducer(loadedState, {
+      type: constants.FILTER_BY_SEARCH_QUERY,
+      query
+    });
+    const expected = sampleData.filter((album) => {
+      const re = new RegExp(query, 'gi');
+      return album.title.match(re) || album.artist.match(re);
+    });
+    expect(filteredState.filteredAlbums).toMatchObject(expected);
+  });
 });

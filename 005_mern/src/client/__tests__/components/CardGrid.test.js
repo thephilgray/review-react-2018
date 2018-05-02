@@ -14,4 +14,10 @@ describe('CardGrid', () => {
     const wrapper = shallow(<CardGrid items={sampledata} />);
     expect(wrapper.children().length).toBe(7);
   });
+
+  it('displays a message to the user if `items` is empty', () => {
+    const emptyMessage = 'No items.';
+    const wrapper = shallow(<CardGrid items={[]} />);
+    expect(wrapper.find('p').text()).toContain(emptyMessage);
+  });
 });

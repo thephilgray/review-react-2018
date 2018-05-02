@@ -5,6 +5,7 @@ import { AlbumGrid } from '../../containers/AlbumGrid';
 
 describe('AlbumGrid container', () => {
   let wrapper;
+
   beforeEach(() => {
     wrapper = shallow(<AlbumGrid />);
   });

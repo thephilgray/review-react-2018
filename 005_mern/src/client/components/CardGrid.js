@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { isEmpty } from 'lodash';
 
 import Card from './Card';
 import withPages from '../hocs/withPages';
@@ -13,7 +14,11 @@ const CardGridWrapper = styled.div`
 
 export const CardGrid = props => (
   <CardGridWrapper data-cy="CardGrid">
-    {props.items.map(album => <Card {...album} key={album._id} />)}
+    {!isEmpty(props.items) ? (
+      props.items.map(album => <Card {...album} key={album._id} />)
+    ) : (
+      <p>No items.</p>
+    )}
   </CardGridWrapper>
 );
 
@@ -22,7 +27,7 @@ CardGrid.propTypes = {
 };
 
 CardGrid.defaultProps = {
-  items: [{}]
+  items: []
 };
 
 export default withPages(CardGrid);
