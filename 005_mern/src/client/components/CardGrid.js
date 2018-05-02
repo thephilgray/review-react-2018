@@ -1,13 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 import Card from './Card';
-import withPages from './withPages';
+import withPages from '../hocs/withPages';
 
-const CardGrid = props => (
-  <div data-cy="CardGrid">
-    {props.items !== null ? props.items.map(album => <Card {...album} key={album._id} />) : null}
-  </div>
+const CardGridWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
+
+export const CardGrid = props => (
+  <CardGridWrapper data-cy="CardGrid">
+    {props.items.map(album => <Card {...album} key={album._id} />)}
+  </CardGridWrapper>
 );
 
 CardGrid.propTypes = {

@@ -1,6 +1,6 @@
 [
   {
-    "id": "1521567322",
+    "_id": "1521567322",
     "title": "Space is the Place",
     "artist": "Sun Ra",
     "art": "https://upload.wikimedia.org/wikipedia/en/6/6c/Space_Is_The_Place_album_cover.jpg",
@@ -8,7 +8,7 @@
     "rating": 5
   },
   {
-    "id": "1521567405",
+    "_id": "1521567405",
     "title": "Lanquidity",
     "artist": "Sun Ra",
     "art": "https://upload.wikimedia.org/wikipedia/en/2/22/Lanquidity.jpg",
@@ -16,7 +16,7 @@
     "rating": 5
   },
   {
-    "id": "1524151599675",
+    "_id": "1524151599675",
     "title": "Monorails and Satellites, Vol 1 & Vol 2",
     "artist": "Sun Ra",
     "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
@@ -24,7 +24,7 @@
     "rating": 5
   },
   {
-    "id": "1524215181333",
+    "_id": "1524215181333",
     "title": "Jazz in Silhouette",
     "artist": "Sun Ra",
     "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
@@ -32,7 +32,7 @@
     "rating": 2
   },
   {
-    "id": "1524215311667",
+    "_id": "1524215311667",
     "title": "The Nubians of Plutonia (aka The Lady with the Golden Stockings)",
     "artist": "Sun Ra",
     "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
@@ -40,7 +40,7 @@
     "rating": 4
   },
   {
-    "id": "1524330665038",
+    "_id": "1524330665038",
     "title": "A Fireside Chat with Lucifer",
     "artist": "Sun Ra",
     "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",
@@ -48,7 +48,7 @@
     "rating": 2
   },
   {
-    "id": "1524415268959",
+    "_id": "1524415268959",
     "title": "Blue Delight",
     "artist": "Sun Ra",
     "art": "https://upload.wikimedia.org/wikipedia/commons/5/59/SunRa_in_1992.jpg",

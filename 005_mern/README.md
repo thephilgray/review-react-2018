@@ -41,7 +41,8 @@ The `React` code is in the `client` directory, the `Express` and `Mongo` code is
 ```js
 // .babelrc
 {
-    "presets": ["env", "react"]
+  "presets": ["env", "react"],
+  "plugins": ["transform-object-rest-spread"]
 }
 ```
 
@@ -153,7 +154,7 @@ app.listen(port, () => console.log(`Listening on http://localhost:${port}`));
 
 ```bash
 yarn add express react react-dom axios
-yarn add -D babel-core babel-jest babel-loader babel-preset-env babel-preset-react body-parser clean-webpack-plugin concurrently css-loader eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-jest eslint-plugin-jsx-a11y eslint-plugin-react html-webpack-plugin jest morgan nodemon style-loader webpack webpack-cli webpack-dev-server
+yarn add -D babel-core babel-jest babel-loader babel-preset-env babel-plugin-transform-object-rest-spread babel-preset-react body-parser clean-webpack-plugin concurrently css-loader eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-jest eslint-plugin-jsx-a11y eslint-plugin-react html-webpack-plugin jest morgan nodemon style-loader webpack webpack-cli webpack-dev-server
 ```
 
 * Create `src/client` and touch `index.js`
@@ -835,10 +836,21 @@ html {
 
 ```
 
-* Install `styled-components`
+* Install `styled-components` and `babel-plugin-styled-components`
 
 ```bash
 yarn add styled-components
+yarn add -D babel-plugin-styled-components
+```
+
+If you like styled-components but don't like how it turns your class names into rubbish hashes, `babel-plugin-styled-components` prepends those hashes with BEM-style names based on the names of the actual components.
+
+```js
+// .babelrc
+{
+  "presets": ["env", "react"],
+  "plugins": ["transform-object-rest-spread", "babel-plugin-styled-components"]
+}
 ```
 
 * Touch `src/client/components/Card.js`
@@ -967,7 +979,6 @@ Card.defaultProps = {
   year: 'Unknown year'
 };
 export default Card;
-
 ```
 
 * Use the `Card` component within the `CardGrid` component, passing each `album` object property down as a prop to `Card`
@@ -984,8 +995,6 @@ const CardGrid = props => (
     {props.albums !== null ? props.albums.map(album => <Card {...album} key={album._id}/>) : null}
   </div>
 );
-
-
 ```
 
 * Run the test again or if `Cypress` is still open, refresh it. It should now pass.
@@ -1046,7 +1055,6 @@ describe('Card', () => {
     expect(wrapper.find('h3').text()).toBe('Unknown title');
   });
 });
-
 ```
 
 
@@ -1137,7 +1145,6 @@ import Card from '../src/client/components/Card';
 // ...boilerplate stories
 
 storiesOf('Card', module).add('default', () => <Card />);
-
 ```
 
 Storybook runs outside of your app, and really forces you to think about how your components look and function in isolation. This is great if you any notion of reusing them elsewhere or building up a UI library. But keep in mind, you'll have to bring or mock your own state, global styles, and Webpack configuration. 
@@ -1192,7 +1199,6 @@ const reducer = (state = initialState, action) => {
 };
 
 export default reducer;
-
 ```
 
 * Import the store and provider into `src/client/index.js` and wrap the top-level component
@@ -1215,7 +1221,6 @@ const app = (
 );
 
 ReactDOM.render(app, document.getElementById('root'));
-
 ```
 
 ## Implement features
@@ -1263,7 +1268,6 @@ describe('App intitialization', () => {
     cy.get('[data-cy=Card]').should('have.lengthOf', maxItemsPerPage);
   });
 });
-
 ```
 
 This first test fails.
@@ -1302,7 +1306,6 @@ CardGrid.defaultProps = {
 };
 
 export default CardGrid;
-
 ```
 
 Now we're only showing the first five pages. Instead of manually accessing the first page with [0], let's store the current page number in local state. We'll need to change this stateless functional component to a class component.
@@ -1351,7 +1354,6 @@ CardGrid.defaultProps = {
 };
 
 export default CardGrid;
-
 ```
 
 Let's make sure there's a next and previous button and that when it's clicked it causes the page to render the next page of items.
@@ -1369,7 +1371,6 @@ Let's make sure there's a next and previous button and that when it's clicked it
     cy.get('button[data-cy=nextPage]').click();
     cy.get('[data-cy=Card]').should('have.lengthOf', 2);
   });
-
 ```
  
 Now, let's create a higher-order component to wrap our CardGrid and handle pagination. We'll be able to expand on this and re-use it in our app.
@@ -1461,7 +1462,6 @@ const withPages = (WrappedComponent) => {
 };
 
 export default withPages;
-
 ``` 
 
 
@@ -1489,7 +1489,6 @@ CardGrid.defaultProps = {
 };
 
 export default withPages(CardGrid);
-
 ```
 
 Now, when we use the `CardGrid` album, we also want to pass down a value for the `maxItemsPerPage` prop, otherwise it will default to 10.
@@ -1522,11 +1521,10 @@ export default class App extends React.Component {
     );
   }
 }
-
 ```
 
 
-### Filter, Sort, and Search
+### Sort
 
 So far we haven't written any additional `Jest/Enzyme` tests and we haven't touched our `Redux` store. The `filter`, `sort`, and `search` feature set will present a good opportunity for this.
 
@@ -1596,8 +1594,6 @@ export const fetchAlbums = () => (dispatch) => {
     .then(({ data }) => dispatch(fetchAlbumsSuccess(data)))
     .catch(error => dispatch(fetchAlbumsFailure(error)));
 };
-
-
 ```
 
 * Add cases to `albumsReducer`
@@ -1615,10 +1611,10 @@ const initialState = {
 const albumsReducer = (state = initialState, action) => {
   switch (action.type) {
     case FETCH_ALBUMS_FAILURE: {
-      return { error: action.error };
+      return { ...state, error: action.error };
     }
     case FETCH_ALBUMS_SUCCESS: {
-      return { albums: action.albums };
+      return { ...state, albums: action.albums };
     }
     default:
       return state;
@@ -1626,7 +1622,6 @@ const albumsReducer = (state = initialState, action) => {
 };
 
 export default albumsReducer;
-
 ```
 
 * Now, let's bring in both the state and the async function to our root component to use instead of local state
@@ -1663,9 +1658,420 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
-
 ```
 
 * The albums are now safely stored in the `Redux` store. If we want to swap out the data that we pass to `CardGrid` and then quickly revert to the original data without fetching it from the server again, no problem.
 
 
+```js
+// src/client/lib/constants.js
+
+//... other consts
+export const SORT_BY_TITLE_ASC = 'SORT_BY_TITLE_ASC';
+export const SORT_BY_TITLE_DESC = 'SORT_BY_TITLE_DESC';
+export const SORT_BY_RATING_ASC = 'SORT_BY_RATING_ASC';
+export const SORT_BY_RATING_DESC = 'SORT_BY_RATING_DESC';
+```
+
+* Create the actions
+
+```js
+// src/client/actions/index.js
+
+import {
+  SORT_BY_RATING_ASC,
+  SORT_BY_RATING_DESC,
+  SORT_BY_TITLE_ASC,
+  SORT_BY_TITLE_DESC,
+} from '../lib/constants';
+
+// ...other imports, other actions
+
+export const sortByTitleAsc = () => ({ type: SORT_BY_TITLE_ASC });
+export const sortByTitleDesc = () => ({ type: SORT_BY_TITLE_DESC });
+export const sortByRatingAsc = () => ({ type: SORT_BY_RATING_ASC });
+export const sortByRatingDesc = () => ({ type: SORT_BY_RATING_DESC });
+```
+
+
+* Touch `src/client/__tests__/reducers/albumsReducer.test.js`
+
+```js
+import albumsReducer from '../../reducers/albumsReducer';
+import * as constants from '../../lib/constants';
+import sampleData from '../../../server/sampledata.json';
+
+describe('albumsReducer', () => {
+  let loadedState;
+  beforeEach(() => {
+    loadedState = albumsReducer(undefined, {
+      type: constants.FETCH_ALBUMS_SUCCESS,
+      albums: sampleData
+    });
+  });
+  it('loads the albums from the server', () => {
+    expect(loadedState.albums.length).toBe(sampleData.length);
+  });
+  it('should sort the albums by title in ascending order', () => {
+    const sortedByTitleAsc = sampleData.sort((a, b) => a.title - b.title);
+    const sortedState = albumsReducer(loadedState, {
+      type: constants.SORT_BY_TITLE_ASC
+    });
+    expect(sortedState.albums).toMatchObject(sortedByTitleAsc);
+  });
+
+  it('should sort the albums by title in descending order', () => {
+    const sortedByTitleDesc = sampleData.sort((a, b) => {
+      if (a.title > b.title) return -1;
+      else if (a.title < b.title) return 1;
+      return 0;
+    });
+    const sortedState = albumsReducer(loadedState, {
+      type: constants.SORT_BY_TITLE_DESC
+    });
+    expect(sortedState.albums).toMatchObject(sortedByTitleDesc);
+  });
+
+  it('should sort the albums by rating in ascending order', () => {
+    const sortedState = albumsReducer(loadedState, {
+      type: constants.SORT_BY_RATING_ASC
+    });
+    const firstItem = sortedState.albums[0].rating;
+    const lastItem = sortedState.albums[sortedState.albums.length - 1].rating;
+    expect(lastItem).toBeGreaterThanOrEqual(firstItem);
+  });
+
+  it('should sort the albums by rating in descending order', () => {
+    const sortedState = albumsReducer(loadedState, {
+      type: constants.SORT_BY_RATING_DESC
+    });
+    const firstItem = sortedState.albums[0].rating;
+    const lastItem = sortedState.albums[sortedState.albums.length - 1].rating;
+    expect(firstItem).toBeGreaterThanOrEqual(lastItem);
+  });
+});
+```
+
+* Update the reducer
+
+```js
+// src/client/reducers/albumsReducer.js
+
+import {
+  FETCH_ALBUMS_FAILURE,
+  FETCH_ALBUMS_SUCCESS,
+  SORT_BY_RATING_ASC,
+  SORT_BY_RATING_DESC,
+  SORT_BY_TITLE_ASC,
+  SORT_BY_TITLE_DESC
+} from '../lib/constants';
+
+const initialState = {
+  albums: null,
+  error: null,
+  sortOrder: ''
+};
+
+const albumsReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case FETCH_ALBUMS_FAILURE: {
+      return { ...state, error: action.error };
+    }
+    case FETCH_ALBUMS_SUCCESS: {
+      return {
+        ...state,
+        albums: action.albums.sort((a, b) => {
+          if (a.title > b.title) return 1;
+          else if (a.title < b.title) return -1;
+          return 0;
+        }),
+        sortOrder: SORT_BY_TITLE_ASC
+      };
+    }
+    case SORT_BY_TITLE_ASC: {
+      return {
+        ...state,
+        albums: state.albums.slice().sort((a, b) => {
+          if (a.title > b.title) return 1;
+          else if (a.title < b.title) return -1;
+          return 0;
+        }),
+        sortOrder: SORT_BY_TITLE_ASC
+      };
+    }
+
+    case SORT_BY_TITLE_DESC: {
+      return {
+        ...state,
+        albums: state.albums.slice().sort((a, b) => {
+          if (a.title > b.title) return -1;
+          else if (a.title < b.title) return 1;
+          return 0;
+        }),
+        sortOrder: SORT_BY_TITLE_DESC
+      };
+    }
+
+    case SORT_BY_RATING_ASC: {
+      return {
+        ...state,
+        albums: state.albums.slice().sort((a, b) => a.rating - b.rating),
+        sortOrder: SORT_BY_RATING_ASC
+      };
+    }
+    case SORT_BY_RATING_DESC: {
+      return {
+        ...state,
+        albums: state.albums.slice().sort((a, b) => b.rating - a.rating),
+        sortOrder: SORT_BY_RATING_DESC
+      };
+    }
+
+    default:
+      return state;
+  }
+};
+
+export default albumsReducer;
+```
+
+### Refactor and Connect
+
+* Extract the withPages HOC logic to a separate file `src/client/hocs/withPages.js`
+
+TODO: Discuss the new `static getDerivedStateFromProps` method
+
+```js
+// src/client/hocs/withPages.js
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import { chunk } from 'lodash';
+import styled from 'styled-components';
+
+const PageButton = styled.button``;
+
+const withPages = (WrappedComponent) => {
+  class WithPages extends React.Component {
+    static getDerivedStateFromProps(nextProps, prevState) {
+      if (nextProps.items !== prevState.items) {
+        const paginate = items => chunk(items, prevState.maxItemsPerPage);
+        const pages = paginate(nextProps.items);
+        const numberOfPages = pages.length;
+        return {
+          ...prevState,
+          pages,
+          numberOfPages,
+          currentPageIndex: 0
+        };
+      }
+      return null;
+    }
+    constructor(props) {
+      super(props);
+      this.state = {
+        maxItemsPerPage: props.maxItemsPerPage,
+        pages: null,
+        numberOfPages: 1,
+        currentPageIndex: 0
+      };
+      this.pages = this.pages.bind(this);
+      this.nextPage = this.nextPage.bind(this);
+      this.prevPage = this.prevPage.bind(this);
+    }
+
+    pages(items) {
+      return chunk(items, this.state.maxItemsPerPage);
+    }
+    nextPage() {
+      this.setState((prevState) => {
+        const nextPageIndex = prevState.currentPageIndex + 1;
+        return { currentPageIndex: nextPageIndex };
+      });
+    }
+
+    prevPage() {
+      this.setState((prevState) => {
+        const prevPageIndex = prevState.currentPageIndex - 1;
+        return { currentPageIndex: prevPageIndex };
+      });
+    }
+
+    render() {
+      return (
+        <div>
+          {this.state.pages !== null ? (
+            <WrappedComponent
+              {...this.props}
+              items={this.state.pages[this.state.currentPageIndex]}
+            />
+          ) : null}
+          <p>
+            {this.state.currentPageIndex + 1} of {this.state.numberOfPages} pages
+          </p>
+          {this.state.currentPageIndex > 0 ? (
+            <PageButton data-cy="prevPage" onClick={this.prevPage}>
+              Previous
+            </PageButton>
+          ) : null}
+          {this.state.currentPageIndex < this.state.numberOfPages - 1 ? (
+            <PageButton data-cy="nextPage" onClick={this.nextPage}>
+              Next
+            </PageButton>
+          ) : null}
+        </div>
+      );
+    }
+  }
+  WithPages.propTypes = {
+    items: PropTypes.arrayOf(PropTypes.object),
+    maxItemsPerPage: PropTypes.number
+  };
+
+  WithPages.defaultProps = {
+    items: [{}],
+    maxItemsPerPage: 10
+  };
+  return WithPages;
+};
+
+export default withPages;
+```
+
+* Create a special container for the CardGrid component called `src/client/containers/AlbumGrid.js`
+
+```js
+// src/client/containers/AlbumGrid.js
+
+import React from 'react';
+
+import withAlbums from '../hocs/withAlbums';
+import CardGrid from '../components/CardGrid';
+
+export const AlbumGrid = props => (
+  <div>
+    <div>
+      <button onClick={props.onSortByRatingAsc}>Sort By Rating (asc)</button>
+      <button onClick={props.onSortByRatingDesc}>Sort By Rating (desc)</button>
+      <button onClick={props.onSortByTitleAsc}>Sort By Title (asc)</button>
+      <button onClick={props.onSortByTitleDesc}>Sort By Title (desc)</button>
+      <p>{props.sortOrder}</p>
+    </div>
+
+    {props.albums ? <CardGrid items={props.albums} maxItemsPerPage={5} /> : null}
+  </div>
+);
+
+export default withAlbums(AlbumGrid);
+```
+
+* Create a higher order component that connects this container with the redux store
+
+```js
+// src/client/hocs/withAlbums.js
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
+import {
+  fetchAlbums,
+  sortByRatingAsc,
+  sortByRatingDesc,
+  sortByTitleAsc,
+  sortByTitleDesc
+} from '../actions';
+
+const withAlbums = (WrappedComponent) => {
+  class WithAlbums extends React.Component {
+    componentDidMount() {
+      this.props.loadAlbums();
+    }
+
+    render() {
+      return <WrappedComponent {...this.props} />;
+    }
+  }
+  WithAlbums.propTypes = {
+    loadAlbums: PropTypes.func.isRequired
+  };
+  const mapStateToProps = state => ({
+    albums: state.albums.albums,
+    sortOrder: state.albums.sortOrder
+  });
+  const mapDispatchToProps = dispatch => ({
+    loadAlbums: () => dispatch(fetchAlbums()),
+    onSortByRatingAsc: () => dispatch(sortByRatingAsc()),
+    onSortByRatingDesc: () => dispatch(sortByRatingDesc()),
+    onSortByTitleAsc: () => dispatch(sortByTitleAsc()),
+    onSortByTitleDesc: () => dispatch(sortByTitleDesc())
+  });
+  return connect(mapStateToProps, mapDispatchToProps)(WithAlbums);
+};
+
+export default withAlbums;
+```
+
+* The `CardGrid` component can now be significantly paired down. Here's the updated test followed by the component:
+
+```js
+// src/client/__tests__/components/Card.test.js
+
+import React from 'react';
+import { shallow } from 'enzyme';
+
+import Card from '../../components/Card';
+import sampleData from '../../../server/sampledata.json';
+
+describe('Card', () => {
+  it('renders', () => {
+    const wrapper = shallow(<Card />);
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('should render a card title by default', () => {
+    const wrapper = shallow(<Card />);
+    expect(wrapper.find('h3').text()).toBeTruthy();
+  });
+
+  it('should render the title of the provided item', () => {
+    const sampleItem = sampleData[0];
+    const wrapper = shallow(<Card {...sampleItem} />);
+    expect(wrapper.find('[data-cy="card__title"]').text()).toContain(sampleItem.title);
+  });
+});
+
+```
+
+```js
+// src/client/components/CardGrid.js
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+
+import Card from './Card';
+import withPages from '../hocs/withPages';
+
+const CardGridWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+`;
+
+export const CardGrid = props => (
+  <CardGridWrapper data-cy="CardGrid">
+    {props.items.map(album => <Card {...album} key={album._id} />)}
+  </CardGridWrapper>
+);
+
+CardGrid.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.object)
+};
+
+CardGrid.defaultProps = {
+  items: [{}]
+};
+
+export default withPages(CardGrid);
+```

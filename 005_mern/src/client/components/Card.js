@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import styled from 'styled-components';
 
-const CardWrapper = styled.div`
+const CardWrapper = styled.div.attrs({})`
   position: relative;
   width: 310px;
   padding: 1em 0.5em;
@@ -92,7 +92,7 @@ class Card extends React.Component {
         </CardImageWrapper>
         <CardBody>
           <CardDetails>
-            <h3>{this.props.title}</h3>
+            <h3 data-cy="card__title">{this.props.title}</h3>
             <p>{this.props.year}</p>
           </CardDetails>
           <CardControls>

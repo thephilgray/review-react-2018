@@ -7,6 +7,20 @@ const PageButton = styled.button``;
 
 const withPages = (WrappedComponent) => {
   class WithPages extends React.Component {
+    static getDerivedStateFromProps(nextProps, prevState) {
+      if (nextProps.items !== prevState.items) {
+        const paginate = items => chunk(items, prevState.maxItemsPerPage);
+        const pages = paginate(nextProps.items);
+        const numberOfPages = pages.length;
+        return {
+          ...prevState,
+          pages,
+          numberOfPages,
+          currentPageIndex: 0
+        };
+      }
+      return null;
+    }
     constructor(props) {
       super(props);
       this.state = {
@@ -18,12 +32,6 @@ const withPages = (WrappedComponent) => {
       this.pages = this.pages.bind(this);
       this.nextPage = this.nextPage.bind(this);
       this.prevPage = this.prevPage.bind(this);
-    }
-
-    componentDidMount() {
-      const pages = this.pages(this.props.items);
-      const numberOfPages = pages.length;
-      this.setState({ pages, numberOfPages });
     }
 
     pages(items) {
