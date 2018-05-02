@@ -1,3 +1,4 @@
+import { escapeRegExp } from 'lodash';
 import albumsReducer from '../../reducers/albumsReducer';
 import * as constants from '../../lib/constants';
 import sampleData from '../../../server/sampledata.json';
@@ -59,6 +60,21 @@ describe('albumsReducer', () => {
     });
     const expected = sampleData.filter((album) => {
       const re = new RegExp(query, 'gi');
+      return album.title.match(re) || album.artist.match(re);
+    });
+    expect(filteredState.filteredAlbums).toMatchObject(expected);
+  });
+
+  it('should escape user input that includes special characters', () => {
+    const query = '(space';
+    const filteredState = albumsReducer(loadedState, {
+      type: constants.FILTER_BY_SEARCH_QUERY,
+      query
+    });
+
+    const escapedQuery = escapeRegExp(query);
+    const expected = sampleData.filter((album) => {
+      const re = new RegExp(escapedQuery, 'gi');
       return album.title.match(re) || album.artist.match(re);
     });
     expect(filteredState.filteredAlbums).toMatchObject(expected);

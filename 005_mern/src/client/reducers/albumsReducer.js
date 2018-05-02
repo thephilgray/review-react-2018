@@ -1,3 +1,5 @@
+import { escapeRegExp } from 'lodash';
+
 import {
   FETCH_ALBUMS_FAILURE,
   FETCH_ALBUMS_SUCCESS,
@@ -38,7 +40,8 @@ const albumsReducer = (state = initialState, action) => {
 
     case FILTER_BY_SEARCH_QUERY: {
       const filteredAlbums = state.albums.slice().filter((album) => {
-        const re = new RegExp(action.query, 'gi');
+        const query = escapeRegExp(action.query);
+        const re = new RegExp(query, 'gi');
         return album.title.match(re) || album.artist.match(re);
       });
       return { ...state, searchActive: true, filteredAlbums };

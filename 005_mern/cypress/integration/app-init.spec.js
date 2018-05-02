@@ -29,4 +29,11 @@ describe('App intitialization', () => {
     cy.get('input[data-cy=searchAlbums]').type(query);
     cy.get('[data-cy=Card]').should('have.lengthOf', 1);
   });
+
+  it('should escape special characters the user types into the search field', () => {
+    const query = '(space';
+    cy.get('button[data-cy="searchButton"]').click();
+    cy.get('input[data-cy=searchAlbums]').type(query);
+    cy.get('[data-cy=Card]').should('have.lengthOf', 1);
+  });
 });

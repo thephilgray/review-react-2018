@@ -1,4 +1,5 @@
 import React from 'react';
+import { escapeRegExp } from 'lodash';
 
 import withAlbums from '../hocs/withAlbums';
 import CardGrid from '../components/CardGrid';
@@ -14,8 +15,12 @@ export const AlbumGrid = class extends React.Component {
   }
 
   search(event) {
-    this.setState({ query: event.target.value }, () =>
-      this.props.onFilterBySearchQuery(this.state.query));
+    const sanitizeInput = e =>
+      escapeRegExp(e)
+        .match(/[A-Za-z0-9 _.,!"'/$]*/gi)
+        .join('');
+    const query = sanitizeInput(event.target.value);
+    this.setState({ query }, () => this.props.onFilterBySearchQuery(this.state.query));
   }
   render() {
     const { props } = this;

@@ -1432,9 +1432,11 @@ const withPages = (WrappedComponent) => {
               items={this.state.pages[this.state.currentPageIndex]}
             />
           ) : null}
-          <p>
-            {this.state.currentPageIndex + 1} of {this.state.numberOfPages} pages
-          </p>
+      {this.state.numberOfPages > 1 ? (
+            <p>
+              {this.state.currentPageIndex + 1} of {this.state.numberOfPages} pages
+            </p>
+          ) : null}
           {this.state.currentPageIndex > 0 ? (
             <PageButton data-cy="prevPage" onClick={this.prevPage}>
               Previous
@@ -1910,9 +1912,11 @@ const withPages = (WrappedComponent) => {
               items={this.state.pages[this.state.currentPageIndex]}
             />
           ) : null}
-          <p>
-            {this.state.currentPageIndex + 1} of {this.state.numberOfPages} pages
-          </p>
+      {this.state.numberOfPages > 1 ? (
+            <p>
+              {this.state.currentPageIndex + 1} of {this.state.numberOfPages} pages
+            </p>
+          ) : null}
           {this.state.currentPageIndex > 0 ? (
             <PageButton data-cy="prevPage" onClick={this.prevPage}>
               Previous
@@ -2774,3 +2778,103 @@ it('should display only the search results when the user enters text into the se
   });
 ```
 
+Another bug to consider is if the user enters special characters or attempt a XSS attack. We should always sanitize user input. Not to mention that currently, if you type `(` into the text input, it causes the regular expression used in the `FILTER_BY_SEARCH_QUERY` reducer case to throw an error and nothing renders on the page.
+
+Basically, we just want to make sure that the following characters get escaped: `"^", "$", "", ".", "*", "+", "?", "(", ")", "[", "]", "{", "}", and "|"`. Since we're already using `lodash`, we can use the `.escapeRegExp` method to handle this, but first let's write a test.
+
+```js
+
+// src/client/__tests__/reducers/albumsReducer.test.js
+
+import { escapeRegExp } from 'lodash';
+// ...other imports
+
+describe('albumsReducer', () => {
+  let loadedState;
+  beforeEach(() => {
+    loadedState = albumsReducer(undefined, {
+      type: constants.FETCH_ALBUMS_SUCCESS,
+      albums: sampleData
+    });
+  });
+
+// ...other tests
+
+  it('should escape user input that includes special characters', () => {
+    const query = '(space';
+    const filteredState = albumsReducer(loadedState, {
+      type: constants.FILTER_BY_SEARCH_QUERY,
+      query
+    });
+
+    const escapedQuery = escapeRegExp(query);
+    const expected = sampleData.filter((album) => {
+      const re = new RegExp(escapedQuery, 'gi');
+      return album.title.match(re) || album.artist.match(re);
+    });
+    expect(filteredState.filteredAlbums).toMatchObject(expected);
+  });
+});
+```
+
+Now, the question is where to escape? We could just escape in the reducer, but I'm going to err on the side of caution and also escape in component before `setState`. Though that will require an integration test to verify. 
+
+```js
+// cypress/integration/app-init.spec.js
+
+// ...other tests
+
+  it('should escape special characters the user types into the search field', () => {
+    const query = '(space';
+    cy.get('button[data-cy="searchButton"]').click();
+    cy.get('input[data-cy=searchAlbums]').type(query);
+    cy.get('[data-cy=Card]').should('have.lengthOf', 1);
+  });
+```
+
+Now, let's escape and sanitize that input in the `AlbumGrid` component before it gets set to state. We're going to let a couple special characters through (in case they're used in obscure album names).
+
+```js
+// src/client/containers/AlbumGrid.js
+
+import {escapeRegExp} from 'lodash';
+// ...other imports
+
+// ...other component code
+
+  search(event) {
+    const sanitizeInput = e =>
+      escapeRegExp(e)
+        .match(/[A-Za-z0-9 _.,!"'/$]*/gi)
+        .join('');
+    const query = sanitizeInput(event.target.value);
+    this.setState({ query }, () => this.props.onFilterBySearchQuery(this.state.query));
+  }
+  
+// ...other component code
+```
+
+The integration test should pass, but let's get our reducer test in the green too.
+
+```js
+// src/client/reducers/albumsReducer.js
+
+import { escapeRegExp } from 'lodash';
+
+//... other imports
+//... other reducer cases
+
+    case FILTER_BY_SEARCH_QUERY: {
+      const filteredAlbums = state.albums.slice().filter((album) => {
+        const query = escapeRegExp(action.query);
+        const re = new RegExp(query, 'gi');
+        return album.title.match(re) || album.artist.match(re);
+      });
+      return { ...state, searchActive: true, filteredAlbums };
+    }
+```
+
+## Auth Workflow
+When a user visits the site, the app will check the browser's `localStorage` (or this can be handled server-side by checking cookies in the request) and if there is a stored value, attempt to authenticate on the user's behalf. Authentication will unlock certain routes and features. 
+
+If not authenticated, the user will only be able to browse the public collection of albums. They shouldn't see the edit or delete buttons. They will, however, see buttons to add a new album or to add an album to their collection. These actions will both redirect the user to a sign-in/sign-up page 

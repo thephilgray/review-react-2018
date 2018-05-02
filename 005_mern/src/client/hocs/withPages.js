@@ -60,9 +60,12 @@ const withPages = (WrappedComponent) => {
               items={this.state.pages[this.state.currentPageIndex]}
             />
           ) : null}
-          <p>
-            {this.state.currentPageIndex + 1} of {this.state.numberOfPages} pages
-          </p>
+          {this.state.numberOfPages > 1 ? (
+            <p>
+              {this.state.currentPageIndex + 1} of {this.state.numberOfPages} pages
+            </p>
+          ) : null}
+
           {this.state.currentPageIndex > 0 ? (
             <PageButton data-cy="prevPage" onClick={this.prevPage}>
               Previous
