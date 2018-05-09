@@ -2,10 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { hideVisually } from 'polished';
 
-import Icon from './Icon';
+// import Icon from './Icon';
 import ProgressBar from './ProgressBar';
 
-import cloudUploadIcon from '../icons/cloud-upload.svg';
+// import cloudUploadIcon from '../icons/cloud-upload.svg';
 import axios from 'axios';
 
 const ImageUploadWrapper = styled.div``;
@@ -55,16 +55,16 @@ const ImageUploadDragArea = styled.div`
   }
 `;
 
-const ImageUploadStatusMessage = styled.div`
-  display: block;
-  display: flex;
-  flex-wrap: wrap;
-  text-align: center;
+// const ImageUploadStatusMessage = styled.div`
+//   display: block;
+//   display: flex;
+//   flex-wrap: wrap;
+//   text-align: center;
 
-  & > * {
-    width: 100%;
-  }
-`;
+//   & > * {
+//     width: 100%;
+//   }
+// `;
 
 const ImageUploadImage = styled.img`
   max-width: 100%;

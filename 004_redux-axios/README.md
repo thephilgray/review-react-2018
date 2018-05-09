@@ -1,3 +1,7 @@
+# React Album collector
+
+> Simple `React` app with `Redux`, `Axios`, and `JSON-Server`. Live demo: [https://004redux-axios-bbwmsdwjot.now.sh/](https://004redux-axios-bbwmsdwjot.now.sh/).
+
 * Bootstap with CRA
 * Remove boilerplate content
 * Create `components` and `containers` directories
@@ -110,6 +114,6 @@ const app = (
 
 ReactDOM.render(app, document.getElementById('root'));
 registerServiceWorker();
-
 ```
+
 * Connect app container to store

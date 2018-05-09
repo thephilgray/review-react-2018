@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
 import { addAlbum, updateAlbum } from '../actions/';
-import sampleData from '../sample_discography.json';
+// import sampleData from '../sample_discography.json';
 import axios from '../lib/albums';
 import Form from '../components/Form';
 
