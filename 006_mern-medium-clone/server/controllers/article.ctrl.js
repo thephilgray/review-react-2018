@@ -16,7 +16,7 @@ export default {
     const {
       text, title, claps, description
     } = req.body;
-    if (req.files.image) {
+    if (req.files && req.files.image) {
       cloudinary.uploader.upload(
         req.files.image.path,
         (result) => {

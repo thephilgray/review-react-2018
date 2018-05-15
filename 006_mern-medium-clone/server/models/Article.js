@@ -30,6 +30,7 @@ ArticleSchema.methods.comment = (c) => {
   return this.save();
 };
 ArticleSchema.methods.addAuthor = (authorId) => {
+  console.log(this.author);
   this.author = authorId;
   return this.save();
 };

@@ -4,13 +4,13 @@ import articleController from './../controllers/article.ctrl';
 const multipartWare = multipart();
 
 export default (router) => {
-  router.route('/articles').get(articleController.getAll);
+  router.get('/articles', articleController.getAll);
 
-  router.route('/article').post(multipartWare, articleController.addArticle);
+  router.post('/article', multipartWare, articleController.addArticle);
 
-  router.route('/article/clap').post(articleController.clapArticle);
+  router.post('/article/clap', articleController.clapArticle);
 
-  router.route('/article/comment').post(articleController.commentArticle);
+  router.post('/article/comment', articleController.commentArticle);
 
-  router.route('/article/:id').get(articleController.getArticle);
+  router.get('/article/:id', articleController.getArticle);
 };
